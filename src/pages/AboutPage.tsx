@@ -1,48 +1,10 @@
 import { motion } from 'motion/react'
+import { ABOUT_TEXT } from '../constants/pages.ts'
 import type { PageId } from '../types.ts'
 
 interface AboutPageProps {
   onNavigate: (page: PageId) => void
 }
-
-const STEPS = [
-  {
-    step: '01',
-    title: 'Pick Image or Sound',
-    detail:
-      'Open Image or Sound from the navigation bar and choose your target quality or MP3 bitrate.',
-  },
-  {
-    step: '02',
-    title: 'Drop files in the box',
-    detail:
-      'Drag and drop one or multiple files into the upload box, or click to select from your device.',
-  },
-  {
-    step: '03',
-    title: 'Compare and download',
-    detail:
-      'Check each file preview, original size, compressed size, and compression percentage, then download.',
-  },
-]
-
-const FORMAT_ROWS = [
-  {
-    input: 'PNG, JPG, JPEG, WebP, BMP, AVIF',
-    output: 'WebP (.webp)',
-    method: 'WebAssembly libwebp encoding with transparency',
-  },
-  {
-    input: 'GIF (.gif)',
-    output: 'GIF (.gif)',
-    method: 'WebAssembly Gifsicle lossy LZW optimization',
-  },
-  {
-    input: 'WAV, MP3, OGG, FLAC, M4A, AAC, WebM',
-    output: 'MP3 (.mp3)',
-    method: 'Web Audio API decoding + LAME MP3 encoding',
-  },
-]
 
 export function AboutPage({ onNavigate }: AboutPageProps) {
   return (
@@ -54,12 +16,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
     >
       <section className="space-y-4">
         <h1 className="max-w-2xl font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
-          About RFT Compress
+          {ABOUT_TEXT.title}
         </h1>
         <p className="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-          RFT Compress is a browser-based media compressor for images and sound.
-          All encoding runs locally in memory on your device, so files never
-          leave your browser.
+          {ABOUT_TEXT.description}
         </p>
       </section>
 
@@ -68,10 +28,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           id="how-to-use-heading"
           className="text-xl font-medium tracking-tight text-ink sm:text-2xl"
         >
-          How to use
+          {ABOUT_TEXT.howToUseHeading}
         </h2>
         <div className="grid gap-8 md:grid-cols-3">
-          {STEPS.map((item) => (
+          {ABOUT_TEXT.steps.map((item) => (
             <article
               key={item.step}
               className="space-y-2.5 border-t border-border pt-5"
@@ -93,10 +53,10 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           id="formats-heading"
           className="text-xl font-medium tracking-tight text-ink sm:text-2xl"
         >
-          Supported formats
+          {ABOUT_TEXT.formatsHeading}
         </h2>
         <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface/50">
-          {FORMAT_ROWS.map((row) => (
+          {ABOUT_TEXT.formats.map((row) => (
             <div
               key={row.output}
               className="grid gap-3 p-5 sm:grid-cols-3 sm:items-center sm:gap-6"
@@ -134,14 +94,14 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
           onClick={() => onNavigate('image')}
           className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
         >
-          Compress images
+          {ABOUT_TEXT.actions.image}
         </button>
         <button
           type="button"
           onClick={() => onNavigate('sound')}
           className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-border-strong px-6 text-sm font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
         >
-          Compress sound
+          {ABOUT_TEXT.actions.sound}
         </button>
       </div>
     </motion.div>

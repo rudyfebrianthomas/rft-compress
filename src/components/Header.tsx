@@ -1,12 +1,6 @@
 import { motion } from 'motion/react'
+import { NAV_ITEMS, SITE_TEXT } from '../constants/navigation.ts'
 import type { PageId, ThemeMode } from '../types.ts'
-
-const NAV_ITEMS: Array<{ id: PageId; label: string }> = [
-  { id: 'home', label: 'Home' },
-  { id: 'image', label: 'Image' },
-  { id: 'sound', label: 'Sound' },
-  { id: 'about', label: 'About' },
-]
 
 interface HeaderProps {
   currentPage: PageId
@@ -26,7 +20,7 @@ export function Header({
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-bg transition-colors">
       <a className="skip-link" href="#main-content">
-        Skip to content
+        {SITE_TEXT.skipToContent}
       </a>
       <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-2 px-6 sm:gap-3 sm:px-8">
         <a
@@ -62,7 +56,7 @@ export function Header({
               strokeLinejoin="round"
             />
           </svg>
-          <span className="truncate">RFT Compress</span>
+          <span className="truncate">{SITE_TEXT.brand}</span>
         </a>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">

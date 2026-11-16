@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import { CompressionResultsSection } from '../components/CompressionResultsSection.tsx'
 import { DropZone } from '../components/DropZone.tsx'
 import { ImageResultCard } from '../components/ImageResultCard.tsx'
+import { IMAGE_COMPRESS_CONFIG } from '../constants/compression.ts'
 import type { ImageItem } from '../types.ts'
 
 interface CompressImagePageProps {
@@ -38,10 +39,10 @@ export function CompressImagePage({
     >
       <section className="space-y-2.5">
         <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
-          Compress images to WebP and GIF
+          {IMAGE_COMPRESS_CONFIG.title}
         </h1>
         <p className="max-w-xl text-base leading-relaxed text-muted">
-          Fast, private compression inside your browser. Nothing is uploaded.
+          {IMAGE_COMPRESS_CONFIG.subtitle}
         </p>
       </section>
 
@@ -52,14 +53,14 @@ export function CompressImagePage({
               htmlFor="quality-range"
               className="text-sm font-medium text-muted"
             >
-              Quality
+              {IMAGE_COMPRESS_CONFIG.qualityLabel}
             </label>
             <input
               id="quality-range"
               type="range"
-              min="30"
-              max="95"
-              step="5"
+              min={IMAGE_COMPRESS_CONFIG.qualityMin}
+              max={IMAGE_COMPRESS_CONFIG.qualityMax}
+              step={IMAGE_COMPRESS_CONFIG.qualityStep}
               value={Math.round(quality * 100)}
               onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
               className="h-1.5 w-36 cursor-pointer accent-accent sm:w-44"
@@ -75,12 +76,15 @@ export function CompressImagePage({
               onClick={onRecompressAll}
               className="inline-flex min-h-9 cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
             >
-              Re-apply
+              {IMAGE_COMPRESS_CONFIG.reapplyLabel}
             </button>
           )}
         </div>
 
-        <DropZone onFilesSelected={onFilesSelected} />
+        <DropZone
+          onFilesSelected={onFilesSelected}
+          {...IMAGE_COMPRESS_CONFIG.dropZone}
+        />
 
         {duplicateNotice && (
           <p role="status" className="font-mono text-xs text-muted">
@@ -92,8 +96,8 @@ export function CompressImagePage({
       {items.length > 0 && (
         <CompressionResultsSection
           items={items}
-          zipFilename="compressed-images.zip"
-          ariaLabel="Compressed images"
+          zipFilename={IMAGE_COMPRESS_CONFIG.zipFilename}
+          ariaLabel={IMAGE_COMPRESS_CONFIG.resultsAriaLabel}
           onClearAll={onClearAll}
           renderItem={(item) => (
             <ImageResultCard

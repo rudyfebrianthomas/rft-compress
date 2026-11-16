@@ -1,361 +1,58 @@
 import { MotionConfig } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Header } from './components/Header.tsx'
 import { LoadingOverlay } from './components/LoadingOverlay.tsx'
+import {
+  IMAGE_COMPRESS_CONFIG,
+  SOUND_COMPRESS_CONFIG,
+} from './constants/compression.ts'
+import { SITE_TEXT } from './constants/navigation.ts'
+import { useBatchRunner } from './hooks/useBatchRunner.ts'
+import { useHashRoute } from './hooks/useHashRoute.ts'
+import { useMediaQueue } from './hooks/useMediaQueue.ts'
+import { useTheme } from './hooks/useTheme.ts'
 import { AboutPage } from './pages/AboutPage.tsx'
 import { CompressImagePage } from './pages/CompressImagePage.tsx'
 import { CompressSoundPage } from './pages/CompressSoundPage.tsx'
 import { HomePage } from './pages/HomePage.tsx'
-import type {
-  BaseMediaItem,
-  ImageItem,
-  LoadingState,
-  PageId,
-  SoundItem,
-  ThemeMode,
-} from './types.ts'
-import { compressImageFile, isGifFile } from './utils/compressImage.ts'
+import { compressImageFile, isImageFile } from './utils/compressImage.ts'
 import { compressSoundFile, isAudioFile } from './utils/compressSound.ts'
-import { partitionNewFiles } from './utils/format.ts'
+import {
+  applyImageResult,
+  applySoundResult,
+  createPendingImageItem,
+  createPendingSoundItem,
+} from './utils/mediaItems.ts'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-function getPageFromHash(): PageId {
-  const hash = window.location.hash.toLowerCase()
-  if (hash === '#image' || hash === '#images') return 'image'
-  if (hash === '#sound' || hash === '#audio') return 'sound'
-  if (hash === '#about') return 'about'
-  return 'home'
-}
-
-function getInitialTheme(): ThemeMode {
-  const docTheme = document.documentElement.dataset.theme
-  if (docTheme === 'dark' || docTheme === 'light') return docTheme
-  const saved = localStorage.getItem('theme')
-  if (saved === 'dark' || saved === 'light') return saved
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light'
-}
-
-function createItemId(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID()
-  }
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-}
-
-function revokeItemUrls(item: BaseMediaItem): void {
-  if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl)
-  if (item.fallbackPreviewUrl) URL.revokeObjectURL(item.fallbackPreviewUrl)
-}
-
-function formatDuplicateNotice(skippedCount: number): string {
-  if (skippedCount <= 0) return ''
-  return `Skipped ${skippedCount} duplicate ${skippedCount === 1 ? 'file' : 'files'} already uploaded.`
-}
-
 function App() {
-  const imageItemsRef = useRef<ImageItem[]>([])
-  const soundItemsRef = useRef<SoundItem[]>([])
-
-  const [currentPage, setCurrentPage] = useState<PageId>(getPageFromHash)
-  const [theme, setTheme] = useState<ThemeMode>(getInitialTheme)
-  const [loadingState, setLoadingState] = useState<LoadingState | null>(null)
+  const { currentPage, navigate } = useHashRoute()
+  const { theme, toggleTheme } = useTheme()
+  const { loadingState, runBatch } = useBatchRunner()
 
   const [quality, setQuality] = useState(0.8)
-  const [imageItems, setImageItems] = useState<ImageItem[]>([])
-  const [imageDuplicateNote, setImageDuplicateNote] = useState('')
-
   const [bitrate, setBitrate] = useState(128)
-  const [soundItems, setSoundItems] = useState<SoundItem[]>([])
-  const [soundDuplicateNote, setSoundDuplicateNote] = useState('')
 
-  useEffect(() => {
-    imageItemsRef.current = imageItems
-  }, [imageItems])
+  const imageQueue = useMediaQueue({
+    setting: quality,
+    loadingLabel: IMAGE_COMPRESS_CONFIG.loadingLabel,
+    isSupported: isImageFile,
+    createPending: createPendingImageItem,
+    compress: compressImageFile,
+    applyResult: applyImageResult,
+    runBatch,
+  })
 
-  useEffect(() => {
-    soundItemsRef.current = soundItems
-  }, [soundItems])
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    document.documentElement.style.colorScheme = theme
-    localStorage.setItem('theme', theme)
-    const meta = document.querySelector('meta[name="theme-color"]')
-    if (meta) {
-      meta.setAttribute('content', theme === 'dark' ? '#18181b' : '#ffffff')
-    }
-  }, [theme])
-
-  useEffect(() => {
-    function handleHashChange() {
-      setCurrentPage(getPageFromHash())
-    }
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      imageItemsRef.current.forEach(revokeItemUrls)
-      soundItemsRef.current.forEach(revokeItemUrls)
-    }
-  }, [])
-
-  function handleNavigate(page: PageId) {
-    setCurrentPage(page)
-    const nextHash = `#${page}`
-    if (window.location.hash !== nextHash) {
-      window.history.pushState(null, '', nextHash)
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  async function runBatch<T extends BaseMediaItem>(
-    entries: T[],
-    label: string,
-    runner: (entry: T) => Promise<void>,
-  ): Promise<void> {
-    setLoadingState({
-      label,
-      total: entries.length,
-      completed: 0,
-      currentName: entries[0]?.outputName || '',
-    })
-
-    try {
-      for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-        setLoadingState((prev) =>
-          prev ? { ...prev, currentName: entry.outputName } : prev,
-        )
-        // Yield a frame so the full-screen overlay paints progress before WASM/CPU work.
-        await new Promise((resolve) => setTimeout(resolve, 16))
-        await runner(entry)
-        setLoadingState((prev) =>
-          prev ? { ...prev, completed: i + 1 } : prev,
-        )
-      }
-    } finally {
-      setLoadingState(null)
-    }
-  }
-
-  async function processImageEntry(
-    id: string,
-    file: File,
-    targetQuality: number,
-  ): Promise<void> {
-    try {
-      const result = await compressImageFile(file, targetQuality)
-      const compressedUrl = URL.createObjectURL(result.blob)
-
-      setImageItems((prev) =>
-        prev.map((item) => {
-          if (item.id !== id) return item
-          if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl)
-          return {
-            ...item,
-            status: 'done',
-            compressedSize: result.blob.size,
-            compressedBlob: result.blob,
-            compressedUrl,
-            previewUrl: compressedUrl,
-            outputName: result.outputName,
-            format: result.format,
-            width: result.width,
-            height: result.height,
-            qualityUsed: targetQuality,
-            error: null,
-          }
-        }),
-      )
-    } catch (err) {
-      setImageItems((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                status: 'error',
-                error: err instanceof Error ? err.message : 'Compression failed.',
-              }
-            : item,
-        ),
-      )
-    }
-  }
-
-  function handleImageFilesSelected(fileList: File[]) {
-    const { accepted, skippedCount } = partitionNewFiles(
-      fileList,
-      imageItems,
-      (file) => file.type.startsWith('image/') || isGifFile(file),
-    )
-    setImageDuplicateNote(formatDuplicateNotice(skippedCount))
-    if (accepted.length === 0) return
-
-    const newEntries: ImageItem[] = accepted.map(({ file, key }) => {
-      const fallbackPreviewUrl = URL.createObjectURL(file)
-      return {
-        id: createItemId(),
-        fileKey: key,
-        file,
-        outputName: file.name,
-        format: isGifFile(file) ? 'GIF' : 'WEBP',
-        originalSize: file.size,
-        compressedSize: 0,
-        compressedBlob: null,
-        compressedUrl: null,
-        fallbackPreviewUrl,
-        previewUrl: fallbackPreviewUrl,
-        width: 0,
-        height: 0,
-        qualityUsed: quality,
-        status: 'processing',
-        error: null,
-      }
-    })
-
-    setImageItems((prev) => [...newEntries, ...prev])
-    void runBatch(newEntries, 'Compressing images', (entry) =>
-      processImageEntry(entry.id, entry.file, quality),
-    )
-  }
-
-  function handleRecompressImages() {
-    const snapshot = imageItems
-    setImageDuplicateNote('')
-    setImageItems((prev) =>
-      prev.map((item) => ({ ...item, status: 'processing', error: null })),
-    )
-    void runBatch(snapshot, 'Compressing images', (item) =>
-      processImageEntry(item.id, item.file, quality),
-    )
-  }
-
-  function handleRemoveImage(id: string) {
-    setImageDuplicateNote('')
-    setImageItems((prev) => {
-      const target = prev.find((item) => item.id === id)
-      if (target) revokeItemUrls(target)
-      return prev.filter((item) => item.id !== id)
-    })
-  }
-
-  function handleClearImages() {
-    setImageDuplicateNote('')
-    setImageItems((prev) => {
-      prev.forEach(revokeItemUrls)
-      return []
-    })
-  }
-
-  async function processSoundEntry(
-    id: string,
-    file: File,
-    targetBitrate: number,
-  ): Promise<void> {
-    try {
-      const result = await compressSoundFile(file, targetBitrate)
-      const compressedUrl = URL.createObjectURL(result.blob)
-
-      setSoundItems((prev) =>
-        prev.map((item) => {
-          if (item.id !== id) return item
-          if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl)
-          return {
-            ...item,
-            status: 'done',
-            compressedSize: result.blob.size,
-            compressedBlob: result.blob,
-            compressedUrl,
-            outputName: result.outputName,
-            format: result.format,
-            duration: result.duration,
-            sampleRate: result.sampleRate,
-            channels: result.channels,
-            bitrateUsed: targetBitrate,
-            error: null,
-          }
-        }),
-      )
-    } catch (err) {
-      setSoundItems((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                status: 'error',
-                error: err instanceof Error ? err.message : 'Compression failed.',
-              }
-            : item,
-        ),
-      )
-    }
-  }
-
-  function handleSoundFilesSelected(fileList: File[]) {
-    const { accepted, skippedCount } = partitionNewFiles(
-      fileList,
-      soundItems,
-      isAudioFile,
-    )
-    setSoundDuplicateNote(formatDuplicateNotice(skippedCount))
-    if (accepted.length === 0) return
-
-    const newEntries: SoundItem[] = accepted.map(({ file, key }) => ({
-      id: createItemId(),
-      fileKey: key,
-      file,
-      outputName: file.name,
-      format: 'MP3',
-      originalSize: file.size,
-      compressedSize: 0,
-      compressedBlob: null,
-      compressedUrl: null,
-      duration: 0,
-      sampleRate: 0,
-      channels: 2,
-      bitrateUsed: bitrate,
-      status: 'processing',
-      error: null,
-    }))
-
-    setSoundItems((prev) => [...newEntries, ...prev])
-    void runBatch(newEntries, 'Compressing sound', (entry) =>
-      processSoundEntry(entry.id, entry.file, bitrate),
-    )
-  }
-
-  function handleRecompressSounds() {
-    const snapshot = soundItems
-    setSoundDuplicateNote('')
-    setSoundItems((prev) =>
-      prev.map((item) => ({ ...item, status: 'processing', error: null })),
-    )
-    void runBatch(snapshot, 'Compressing sound', (item) =>
-      processSoundEntry(item.id, item.file, bitrate),
-    )
-  }
-
-  function handleRemoveSound(id: string) {
-    setSoundDuplicateNote('')
-    setSoundItems((prev) => {
-      const target = prev.find((item) => item.id === id)
-      if (target) revokeItemUrls(target)
-      return prev.filter((item) => item.id !== id)
-    })
-  }
-
-  function handleClearSounds() {
-    setSoundDuplicateNote('')
-    setSoundItems((prev) => {
-      prev.forEach(revokeItemUrls)
-      return []
-    })
-  }
+  const soundQueue = useMediaQueue({
+    setting: bitrate,
+    loadingLabel: SOUND_COMPRESS_CONFIG.loadingLabel,
+    isSupported: isAudioFile,
+    createPending: createPendingSoundItem,
+    compress: compressSoundFile,
+    applyResult: applySoundResult,
+    runBatch,
+  })
 
   const isCompressing = loadingState !== null
 
@@ -367,11 +64,9 @@ function App() {
       >
         <Header
           currentPage={currentPage}
-          onNavigate={handleNavigate}
+          onNavigate={navigate}
           theme={theme}
-          onToggleTheme={() =>
-            setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
-          }
+          onToggleTheme={toggleTheme}
         />
 
         <main
@@ -380,39 +75,39 @@ function App() {
         >
           {currentPage === 'image' && (
             <CompressImagePage
-              items={imageItems}
+              items={imageQueue.items}
               quality={quality}
-              duplicateNotice={imageDuplicateNote}
+              duplicateNotice={imageQueue.duplicateNotice}
               onQualityChange={setQuality}
-              onFilesSelected={handleImageFilesSelected}
-              onRecompressAll={handleRecompressImages}
-              onRemoveItem={handleRemoveImage}
-              onClearAll={handleClearImages}
+              onFilesSelected={imageQueue.handleFilesSelected}
+              onRecompressAll={imageQueue.handleRecompressAll}
+              onRemoveItem={imageQueue.handleRemoveItem}
+              onClearAll={imageQueue.handleClearAll}
             />
           )}
 
           {currentPage === 'sound' && (
             <CompressSoundPage
-              items={soundItems}
+              items={soundQueue.items}
               bitrate={bitrate}
-              duplicateNotice={soundDuplicateNote}
+              duplicateNotice={soundQueue.duplicateNotice}
               onBitrateChange={setBitrate}
-              onFilesSelected={handleSoundFilesSelected}
-              onRecompressAll={handleRecompressSounds}
-              onRemoveItem={handleRemoveSound}
-              onClearAll={handleClearSounds}
+              onFilesSelected={soundQueue.handleFilesSelected}
+              onRecompressAll={soundQueue.handleRecompressAll}
+              onRemoveItem={soundQueue.handleRemoveItem}
+              onClearAll={soundQueue.handleClearAll}
             />
           )}
 
-          {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
+          {currentPage === 'about' && <AboutPage onNavigate={navigate} />}
 
-          {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
+          {currentPage === 'home' && <HomePage onNavigate={navigate} />}
         </main>
 
         <footer className="mx-auto w-full max-w-4xl px-6 pb-4 text-center sm:px-8">
           <div className="border-t border-border pt-3">
             <p className="font-mono text-[11px] leading-none text-muted">
-              © {CURRENT_YEAR} RFT Compress · Local Image &amp; Sound
+              © {CURRENT_YEAR} {SITE_TEXT.brand} · {SITE_TEXT.footerTagline}
             </p>
           </div>
         </footer>

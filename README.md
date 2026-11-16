@@ -55,6 +55,15 @@ npm run preview  # Preview production build locally
     ├── types.ts
     ├── vite-env.d.ts
     ├── App.tsx
+    ├── constants/
+    │   ├── compression.ts
+    │   ├── navigation.ts
+    │   └── pages.ts
+    ├── hooks/
+    │   ├── useBatchRunner.ts
+    │   ├── useHashRoute.ts
+    │   ├── useMediaQueue.ts
+    │   └── useTheme.ts
     ├── components/
     │   ├── CompressionResultsSection.tsx
     │   ├── DropZone.tsx
@@ -72,5 +81,6 @@ npm run preview  # Preview production build locally
         ├── compressImage.ts
         ├── compressSound.ts
         ├── download.ts
-        └── format.ts
+        ├── format.ts
+        └── mediaItems.ts
 ```

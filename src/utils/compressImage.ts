@@ -24,6 +24,10 @@ export function isGifFile(file: { type: string; name: string }): boolean {
   )
 }
 
+export function isImageFile(file: { type: string; name: string }): boolean {
+  return file.type.startsWith('image/') || isGifFile(file)
+}
+
 async function decodeDrawable(
   blob: Blob,
   name = 'image',

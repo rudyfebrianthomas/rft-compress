@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { type ChangeEvent, type DragEvent, type KeyboardEvent, useRef, useState } from 'react'
+import { IMAGE_COMPRESS_CONFIG } from '../constants/compression.ts'
 
 interface DropZoneProps {
   onFilesSelected: (files: File[]) => void
@@ -15,12 +16,12 @@ interface DropZoneProps {
 export function DropZone({
   onFilesSelected,
   disabled = false,
-  accept = 'image/*,.gif,.png,.jpg,.jpeg,.webp,.avif,.bmp',
-  ariaLabel = 'Upload images by dragging and dropping or clicking to browse',
-  idleTitle = 'Drop images here or browse',
-  dragTitle = 'Drop images to compress',
-  formatHint = 'PNG · JPG · WEBP · BMP · AVIF → WEBP / GIF → GIF',
-  buttonLabel = 'Select images',
+  accept = IMAGE_COMPRESS_CONFIG.dropZone.accept,
+  ariaLabel = IMAGE_COMPRESS_CONFIG.dropZone.ariaLabel,
+  idleTitle = IMAGE_COMPRESS_CONFIG.dropZone.idleTitle,
+  dragTitle = IMAGE_COMPRESS_CONFIG.dropZone.dragTitle,
+  formatHint = IMAGE_COMPRESS_CONFIG.dropZone.formatHint,
+  buttonLabel = IMAGE_COMPRESS_CONFIG.dropZone.buttonLabel,
 }: DropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const dragDepthRef = useRef(0)

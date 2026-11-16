@@ -1,32 +1,10 @@
 import { motion } from 'motion/react'
+import { HOME_TEXT } from '../constants/pages.ts'
 import type { PageId } from '../types.ts'
 
 interface HomePageProps {
   onNavigate: (page: PageId) => void
 }
-
-const TOOLS: Array<{
-  id: Extract<PageId, 'image' | 'sound'>
-  title: string
-  formats: string
-  description: string
-  action: string
-}> = [
-  {
-    id: 'image',
-    title: 'Compress Image',
-    formats: 'PNG · JPG · WEBP · BMP · GIF',
-    description: 'Convert photos to WebP and shrink animated GIFs.',
-    action: 'Compress images',
-  },
-  {
-    id: 'sound',
-    title: 'Compress Sound',
-    formats: 'WAV · MP3 · OGG · FLAC · M4A',
-    description: 'Encode audio files into smaller MP3s by bitrate.',
-    action: 'Compress sound',
-  },
-]
 
 export function HomePage({ onNavigate }: HomePageProps) {
   return (
@@ -38,16 +16,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
     >
       <section className="space-y-3">
         <h1 className="max-w-2xl font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
-          Compress images and sound
+          {HOME_TEXT.title}
         </h1>
         <p className="max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-          Local WebP, GIF, and MP3 compression in your browser. Zero server
-          uploads.
+          {HOME_TEXT.subtitle}
         </p>
       </section>
 
-      <section aria-label="Compression tools" className="grid gap-4 sm:grid-cols-2">
-        {TOOLS.map((tool) => (
+      <section
+        aria-label={HOME_TEXT.toolsAriaLabel}
+        className="grid gap-4 sm:grid-cols-2"
+      >
+        {HOME_TEXT.tools.map((tool) => (
           <article
             key={tool.id}
             className="flex flex-col justify-between gap-6 rounded-2xl border border-border bg-surface/50 p-6 transition-colors hover:border-border-strong"
@@ -81,7 +61,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
           onClick={() => onNavigate('about')}
           className="inline-flex min-h-11 cursor-pointer items-center text-sm font-medium text-muted transition-colors hover:text-ink"
         >
-          How it works &amp; supported formats →
+          {HOME_TEXT.aboutLinkLabel}
         </button>
       </div>
     </motion.div>
