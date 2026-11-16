@@ -217,12 +217,45 @@ function App() {
             )}
           </main>
 
-          <footer className="border-t border-border">
-            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-xs text-muted sm:px-8 sm:text-sm">
-              <span>RFT Compress Images</span>
-              <span className="font-mono text-xs">
-                Local WebP &amp; GIF compression
-              </span>
+          <footer className="mx-auto w-full max-w-4xl px-6 pb-10 pt-4 sm:px-8">
+            <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span className="font-medium tracking-tight text-ink">
+                  RFT Compress Images
+                </span>
+                <span aria-hidden="true" className="text-muted">
+                  /
+                </span>
+                <span className="font-mono text-xs text-muted">
+                  Client-side WebP &amp; GIF
+                </span>
+              </div>
+
+              <nav
+                aria-label="Footer"
+                className="flex items-center gap-5 text-sm text-muted"
+              >
+                <a
+                  href="#home"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNavigate('home')
+                  }}
+                  className="inline-flex min-h-[44px] items-center transition-colors hover:text-ink"
+                >
+                  Home
+                </a>
+                <a
+                  href="#about"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNavigate('about')
+                  }}
+                  className="inline-flex min-h-[44px] items-center transition-colors hover:text-ink"
+                >
+                  About
+                </a>
+              </nav>
             </div>
           </footer>
         </div>
