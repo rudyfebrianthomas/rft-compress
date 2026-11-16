@@ -47,36 +47,39 @@ export function CompressImagePage({
       transition={{ duration: 0.22, ease: 'easeOut' }}
       className="space-y-10"
     >
-      <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2.5">
-          <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
-            Compress images to WebP and GIF
-          </h1>
-          <p className="max-w-xl text-base leading-relaxed text-muted">
-            Fast, private compression inside your browser. Nothing is uploaded.
-          </p>
-        </div>
+      <section className="space-y-2.5">
+        <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
+          Compress images to WebP and GIF
+        </h1>
+        <p className="max-w-xl text-base leading-relaxed text-muted">
+          Fast, private compression inside your browser. Nothing is uploaded.
+        </p>
+      </section>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-3">
-          <label
-            htmlFor="quality-range"
-            className="text-sm font-medium text-muted"
-          >
-            Quality
-          </label>
-          <input
-            id="quality-range"
-            type="range"
-            min="30"
-            max="95"
-            step="5"
-            value={Math.round(quality * 100)}
-            onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
-            className="h-1.5 w-32 cursor-pointer accent-accent sm:w-36"
-          />
-          <span className="min-w-[3.25rem] text-right font-mono text-sm font-medium text-ink tabular-nums">
-            {Math.round(quality * 100)}%
-          </span>
+      <section aria-label="Image upload and quality" className="space-y-3">
+        <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <label
+              htmlFor="quality-range"
+              className="text-sm font-medium text-muted"
+            >
+              Quality
+            </label>
+            <input
+              id="quality-range"
+              type="range"
+              min="30"
+              max="95"
+              step="5"
+              value={Math.round(quality * 100)}
+              onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
+              className="h-1.5 w-36 cursor-pointer accent-accent sm:w-44"
+            />
+            <span className="min-w-[3.25rem] text-right font-mono text-sm font-medium text-ink tabular-nums">
+              {Math.round(quality * 100)}%
+            </span>
+          </div>
+
           {hasStaleQuality && (
             <button
               type="button"
@@ -87,9 +90,7 @@ export function CompressImagePage({
             </button>
           )}
         </div>
-      </section>
 
-      <section aria-label="Image upload dropzone">
         <DropZone onFilesSelected={onFilesSelected} />
       </section>
 

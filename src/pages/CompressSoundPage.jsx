@@ -49,43 +49,46 @@ export function CompressSoundPage({
       transition={{ duration: 0.22, ease: 'easeOut' }}
       className="space-y-10"
     >
-      <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2.5">
-          <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
-            Compress sound to MP3
-          </h1>
-          <p className="max-w-xl text-base leading-relaxed text-muted">
-            Shrink WAV, MP3, OGG, FLAC, and M4A audio in your browser. Nothing is
-            uploaded.
-          </p>
-        </div>
+      <section className="space-y-2.5">
+        <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
+          Compress sound to MP3
+        </h1>
+        <p className="max-w-xl text-base leading-relaxed text-muted">
+          Shrink WAV, MP3, OGG, FLAC, and M4A audio in your browser. Nothing is
+          uploaded.
+        </p>
+      </section>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <span className="text-sm font-medium text-muted">Bitrate</span>
-          <div
-            role="group"
-            aria-label="MP3 bitrate"
-            className="inline-flex items-center rounded-full border border-border bg-surface/60 p-1"
-          >
-            {BITRATE_OPTIONS.map((option) => {
-              const active = bitrate === option
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => onBitrateChange(option)}
-                  aria-pressed={active}
-                  className={`min-h-[34px] cursor-pointer rounded-full px-3 font-mono text-xs font-medium transition-colors ${
-                    active
-                      ? 'bg-accent text-accent-ink'
-                      : 'text-muted hover:text-ink'
-                  }`}
-                >
-                  {option}k
-                </button>
-              )
-            })}
+      <section aria-label="Sound upload and bitrate" className="space-y-3">
+        <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-sm font-medium text-muted">Bitrate</span>
+            <div
+              role="group"
+              aria-label="MP3 bitrate"
+              className="inline-flex items-center rounded-full border border-border bg-surface/60 p-1"
+            >
+              {BITRATE_OPTIONS.map((option) => {
+                const active = bitrate === option
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => onBitrateChange(option)}
+                    aria-pressed={active}
+                    className={`min-h-[34px] cursor-pointer rounded-full px-3 font-mono text-xs font-medium transition-colors ${
+                      active
+                        ? 'bg-accent text-accent-ink'
+                        : 'text-muted hover:text-ink'
+                    }`}
+                  >
+                    {option}k
+                  </button>
+                )
+              })}
+            </div>
           </div>
+
           {hasStaleBitrate && (
             <button
               type="button"
@@ -96,9 +99,7 @@ export function CompressSoundPage({
             </button>
           )}
         </div>
-      </section>
 
-      <section aria-label="Sound upload dropzone">
         <DropZone
           onFilesSelected={onFilesSelected}
           accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac,.webm"
