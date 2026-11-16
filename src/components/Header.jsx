@@ -22,7 +22,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
             e.preventDefault()
             onNavigate('home')
           }}
-          className="inline-flex min-h-[44px] min-w-0 items-center gap-2 font-display text-sm font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:gap-2.5 sm:text-base"
+          className="inline-flex min-h-11 min-w-0 items-center gap-2 font-display text-sm font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:gap-2.5 sm:text-base"
         >
           <svg
             width="18"
@@ -65,7 +65,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                     e.preventDefault()
                     onNavigate(item.id)
                   }}
-                  className={`relative inline-flex min-h-[44px] items-center rounded-full px-2.5 text-xs font-medium transition-colors sm:px-3.5 sm:text-sm ${
+                  className={`relative inline-flex min-h-11 items-center rounded-full px-2.5 text-xs font-medium transition-colors sm:px-3.5 sm:text-sm ${
                     isActive
                       ? 'text-accent-ink'
                       : 'text-muted hover:text-ink'

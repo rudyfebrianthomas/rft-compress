@@ -127,14 +127,14 @@ export function AboutPage({ onNavigate }) {
         <button
           type="button"
           onClick={() => onNavigate('image')}
-          className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
+          className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
         >
           Compress images
         </button>
         <button
           type="button"
           onClick={() => onNavigate('sound')}
-          className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full border border-border-strong px-6 text-sm font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
+          className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-border-strong px-6 text-sm font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
         >
           Compress sound
         </button>

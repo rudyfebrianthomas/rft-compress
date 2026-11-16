@@ -86,9 +86,9 @@ export function DropZone({
       onDrop={handleDrop}
       animate={{ scale: isDragging ? 1.006 : 1 }}
       transition={{ duration: 0.16, ease: 'easeOut' }}
-      className={`group relative flex min-h-[280px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-14 text-center transition-all sm:min-h-[320px] ${
+      className={`group relative flex min-h-70 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-14 text-center transition-all sm:min-h-80 ${
         isDragging
-          ? 'border-accent bg-accent/[0.06]'
+          ? 'border-accent bg-accent/6'
           : 'border-border-strong bg-surface/60 hover:border-ink/45 hover:bg-surface'
       }`}
     >
@@ -138,7 +138,7 @@ export function DropZone({
         {formatHint}
       </p>
 
-      <span className="mt-7 inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-transform group-hover:opacity-90 group-active:scale-[0.98]">
+      <span className="mt-7 inline-flex min-h-11 items-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-transform group-hover:opacity-90 group-active:scale-[0.98]">
         {buttonLabel}
       </span>
     </motion.div>

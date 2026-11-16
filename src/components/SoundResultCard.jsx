@@ -136,7 +136,7 @@ export function SoundResultCard({ item, onRemove }) {
           type="button"
           onClick={handleDownload}
           disabled={!isReady}
-          className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-4 text-xs font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm"
+          className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-4 text-xs font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm"
         >
           Download
         </button>

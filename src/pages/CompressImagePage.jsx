@@ -58,7 +58,7 @@ export function CompressImagePage({
       </section>
 
       <section aria-label="Image upload and quality" className="space-y-3">
-        <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
+        <div className="flex min-h-11 flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <label
               htmlFor="quality-range"
@@ -76,7 +76,7 @@ export function CompressImagePage({
               onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
               className="h-1.5 w-36 cursor-pointer accent-accent sm:w-44"
             />
-            <span className="min-w-[3.25rem] text-right font-mono text-sm font-medium text-ink tabular-nums">
+            <span className="min-w-13 text-right font-mono text-sm font-medium text-ink tabular-nums">
               {Math.round(quality * 100)}%
             </span>
           </div>
@@ -85,7 +85,7 @@ export function CompressImagePage({
             <button
               type="button"
               onClick={onRecompressAll}
-              className="inline-flex min-h-[36px] cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
+              className="inline-flex min-h-9 cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
             >
               Re-apply
             </button>
@@ -135,7 +135,7 @@ export function CompressImagePage({
                 type="button"
                 onClick={handleDownloadAll}
                 disabled={isZipping || readyItems.length === 0}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
+                className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
               >
                 {isZipping
                   ? 'Zipping…'
@@ -144,7 +144,7 @@ export function CompressImagePage({
               <button
                 type="button"
                 onClick={onClearAll}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
+                className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
                 Clear
               </button>

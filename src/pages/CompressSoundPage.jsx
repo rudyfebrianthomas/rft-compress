@@ -61,7 +61,7 @@ export function CompressSoundPage({
       </section>
 
       <section aria-label="Sound upload and bitrate" className="space-y-3">
-        <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
+        <div className="flex min-h-11 flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium text-muted">Bitrate</span>
             <div
@@ -77,7 +77,7 @@ export function CompressSoundPage({
                     type="button"
                     onClick={() => onBitrateChange(option)}
                     aria-pressed={active}
-                    className={`min-h-[34px] cursor-pointer rounded-full px-3 font-mono text-xs font-medium transition-colors ${
+                    className={`min-h-8.5 cursor-pointer rounded-full px-3 font-mono text-xs font-medium transition-colors ${
                       active
                         ? 'bg-accent text-accent-ink'
                         : 'text-muted hover:text-ink'
@@ -94,7 +94,7 @@ export function CompressSoundPage({
             <button
               type="button"
               onClick={onRecompressAll}
-              className="inline-flex min-h-[36px] cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
+              className="inline-flex min-h-9 cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
             >
               Re-apply
             </button>
@@ -152,7 +152,7 @@ export function CompressSoundPage({
                 type="button"
                 onClick={handleDownloadAll}
                 disabled={isZipping || readyItems.length === 0}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
+                className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
               >
                 {isZipping
                   ? 'Zipping…'
@@ -161,7 +161,7 @@ export function CompressSoundPage({
               <button
                 type="button"
                 onClick={onClearAll}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
+                className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
                 Clear
               </button>

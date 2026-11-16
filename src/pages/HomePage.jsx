@@ -55,7 +55,7 @@ export function HomePage({ onNavigate }) {
               <button
                 type="button"
                 onClick={() => onNavigate(tool.id)}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
+                className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
               >
                 {tool.action}
               </button>
@@ -68,7 +68,7 @@ export function HomePage({ onNavigate }) {
         <button
           type="button"
           onClick={() => onNavigate('about')}
-          className="inline-flex min-h-[44px] cursor-pointer items-center text-sm font-medium text-muted transition-colors hover:text-ink"
+          className="inline-flex min-h-11 cursor-pointer items-center text-sm font-medium text-muted transition-colors hover:text-ink"
         >
           How it works &amp; supported formats →
         </button>
