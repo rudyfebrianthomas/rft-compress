@@ -1,12 +1,6 @@
 import encodeWebp from '@jsquash/webp/encode.js'
 import gifsicle from 'gifsicle-wasm-browser'
-import {
-  formatBytes,
-  getCompressionStats,
-  replaceExtension,
-} from './format.js'
-
-export { formatBytes, getCompressionStats }
+import { replaceExtension } from './format.js'
 
 export function isGifFile(file) {
   return (
@@ -84,7 +78,6 @@ export async function compressToWebp(file, quality = 0.8) {
     blob: new Blob([buffer], { type: 'image/webp' }),
     width,
     height,
-    frameCount: 1,
     outputName: replaceExtension(file.name, 'webp'),
     format: 'WEBP',
   }
@@ -110,7 +103,6 @@ export async function compressGif(file, quality = 0.8) {
     blob: outputBlob,
     width,
     height,
-    frameCount: 1,
     outputName: replaceExtension(file.name, 'gif'),
     format: 'GIF',
   }

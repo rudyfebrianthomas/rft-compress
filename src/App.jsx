@@ -146,7 +146,6 @@ function App() {
             format: result.format,
             width: result.width,
             height: result.height,
-            frameCount: result.frameCount,
             qualityUsed: targetQuality,
             error: null,
           }
@@ -197,7 +196,6 @@ function App() {
         previewUrl: fallbackPreviewUrl,
         width: 0,
         height: 0,
-        frameCount: 1,
         qualityUsed: quality,
         status: 'processing',
         error: null,
