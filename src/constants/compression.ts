@@ -62,3 +62,5 @@ export const RESULTS_TEXT = {
   completedSuffix: 'completed',
 } as const
 
+export const UPLOAD_ERROR_HIDE_MS = 5000
+
