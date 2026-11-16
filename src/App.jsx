@@ -191,7 +191,7 @@ function App() {
 
           <footer className="border-t border-border">
             <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-sm text-muted sm:px-8">
-              <span>PressImg — Local WebP and GIF compression</span>
+              <span>Rudy Febrianthomas Compress Images — Local WebP and GIF compression</span>
               <span className="font-mono text-xs">
                 Runs in your browser. Zero uploads.
               </span>

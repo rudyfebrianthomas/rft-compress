@@ -11,18 +11,18 @@ export function Header({ currentPage, onNavigate }) {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-6 sm:px-8">
         <a
           href="#home"
           onClick={(e) => {
             e.preventDefault()
             onNavigate('home')
           }}
-          className="inline-flex min-h-[44px] items-center gap-2.5 text-lg font-semibold tracking-tight text-ink transition-opacity hover:opacity-85"
+          className="inline-flex min-h-[44px] min-w-0 items-center gap-2.5 text-base font-semibold tracking-tight text-ink transition-opacity hover:opacity-85 sm:text-lg"
         >
           <span
             aria-hidden="true"
-            className="grid h-7 w-7 place-items-center rounded-md border border-accent/40 bg-surface"
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-md border border-accent/40 bg-surface"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <rect
@@ -43,10 +43,10 @@ export function Header({ currentPage, onNavigate }) {
               />
             </svg>
           </span>
-          <span>PressImg</span>
+          <span className="truncate">Rudy Febrianthomas Compress Images</span>
         </a>
 
-        <nav aria-label="Primary" className="flex items-center gap-1">
+        <nav aria-label="Primary" className="flex shrink-0 items-center gap-1">
           {NAV_ITEMS.map((item) => {
             const isActive = currentPage === item.id
             return (
