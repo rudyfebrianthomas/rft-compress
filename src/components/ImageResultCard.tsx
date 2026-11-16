@@ -5,9 +5,14 @@ import { ResultRow } from './ResultRow.tsx'
 interface ImageResultCardProps {
   item: ImageItem
   onRemove: (id: string) => void
+  onDownloaded?: (id: string) => void
 }
 
-export function ImageResultCard({ item, onRemove }: ImageResultCardProps) {
+export function ImageResultCard({
+  item,
+  onRemove,
+  onDownloaded,
+}: ImageResultCardProps) {
   const meta =
     item.width > 0 && item.height > 0 ? `${item.width}×${item.height}` : ''
 
@@ -35,6 +40,7 @@ export function ImageResultCard({ item, onRemove }: ImageResultCardProps) {
       meta={meta}
       media={media}
       onRemove={onRemove}
+      onDownloaded={onDownloaded}
       processingLabel={RESULTS_TEXT.imageProcessingLabel}
       fallbackError={RESULTS_TEXT.imageErrorLabel}
     />

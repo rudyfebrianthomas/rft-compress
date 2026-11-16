@@ -52,6 +52,7 @@ export const RESULTS_TEXT = {
   zipSuffix: '.zip',
   clearLabel: 'Clear',
   downloadLabel: 'Download',
+  downloadedLabel: 'Downloaded',
   defaultProcessingLabel: 'Compressing…',
   defaultErrorLabel: 'Could not compress this file.',
   imageProcessingLabel: 'Compressing…',

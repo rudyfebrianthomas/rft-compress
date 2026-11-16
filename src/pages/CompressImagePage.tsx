@@ -13,6 +13,7 @@ interface CompressImagePageProps {
   onQualityChange: (quality: number) => void
   onFilesSelected: (files: File[]) => void
   onRecompressAll: () => void
+  onMarkDownloaded?: (ids: string[]) => void
   onRemoveItem: (id: string) => void
   onClearAll: () => void
 }
@@ -25,6 +26,7 @@ export function CompressImagePage({
   onQualityChange,
   onFilesSelected,
   onRecompressAll,
+  onMarkDownloaded,
   onRemoveItem,
   onClearAll,
 }: CompressImagePageProps) {
@@ -107,11 +109,13 @@ export function CompressImagePage({
           zipFilename={IMAGE_COMPRESS_CONFIG.zipFilename}
           ariaLabel={IMAGE_COMPRESS_CONFIG.resultsAriaLabel}
           onClearAll={onClearAll}
+          onDownloaded={onMarkDownloaded}
           renderItem={(item) => (
             <ImageResultCard
               key={item.id}
               item={item}
               onRemove={onRemoveItem}
+              onDownloaded={(id) => onMarkDownloaded?.([id])}
             />
           )}
         />

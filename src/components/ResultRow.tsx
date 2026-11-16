@@ -10,6 +10,7 @@ interface ResultRowProps {
   meta?: string
   media: ReactNode
   onRemove: (id: string) => void
+  onDownloaded?: (id: string) => void
   processingLabel?: string
   fallbackError?: string
 }
@@ -19,6 +20,7 @@ export function ResultRow({
   meta,
   media,
   onRemove,
+  onDownloaded,
   processingLabel = RESULTS_TEXT.defaultProcessingLabel,
   fallbackError = RESULTS_TEXT.defaultErrorLabel,
 }: ResultRowProps) {
@@ -31,6 +33,7 @@ export function ResultRow({
   function handleDownload() {
     if (!item.compressedUrl) return
     triggerUrlDownload(item.compressedUrl, item.outputName)
+    onDownloaded?.(item.id)
   }
 
   return (
@@ -94,9 +97,32 @@ export function ResultRow({
           type="button"
           onClick={handleDownload}
           disabled={!isReady}
-          className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-4 text-xs font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm"
+          className={`inline-flex min-h-11 cursor-pointer items-center justify-center gap-1.5 rounded-full px-4 text-xs font-medium transition-colors active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm ${
+            item.downloaded
+              ? 'border border-border-strong bg-surface text-ink hover:bg-surface-elevated'
+              : 'bg-accent text-accent-ink hover:opacity-90'
+          }`}
         >
-          {RESULTS_TEXT.downloadLabel}
+          {item.downloaded && (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3.5 8.5L6.5 11.5L12.5 5"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
+          {item.downloaded
+            ? RESULTS_TEXT.downloadedLabel
+            : RESULTS_TEXT.downloadLabel}
         </button>
         <button
           type="button"

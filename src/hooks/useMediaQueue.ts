@@ -130,10 +130,25 @@ export function useMediaQueue<
     setDuplicateNotice('')
     updateUploadError('')
     setItems((prev) =>
-      prev.map((item) => ({ ...item, status: 'processing', error: null })),
+      prev.map((item) => ({
+        ...item,
+        status: 'processing',
+        error: null,
+        downloaded: false,
+      })),
     )
     void runBatch(snapshot, loadingLabel, (item) =>
       processEntry(item.id, item.file, setting),
+    )
+  }
+
+  function handleMarkDownloaded(ids: string[]): void {
+    if (ids.length === 0) return
+    const idSet = new Set(ids)
+    setItems((prev) =>
+      prev.map((item) =>
+        idSet.has(item.id) ? { ...item, downloaded: true } : item,
+      ),
     )
   }
 
@@ -162,6 +177,7 @@ export function useMediaQueue<
     uploadError,
     handleFilesSelected,
     handleRecompressAll,
+    handleMarkDownloaded,
     handleRemoveItem,
     handleClearAll,
   }

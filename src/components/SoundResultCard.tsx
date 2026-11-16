@@ -7,9 +7,14 @@ import { ResultRow } from './ResultRow.tsx'
 interface SoundResultCardProps {
   item: SoundItem
   onRemove: (id: string) => void
+  onDownloaded?: (id: string) => void
 }
 
-export function SoundResultCard({ item, onRemove }: SoundResultCardProps) {
+export function SoundResultCard({
+  item,
+  onRemove,
+  onDownloaded,
+}: SoundResultCardProps) {
   const { audioRef, isPlaying, setIsPlaying, togglePlay } = useAudioPreview(
     item.compressedUrl,
   )
@@ -74,6 +79,7 @@ export function SoundResultCard({ item, onRemove }: SoundResultCardProps) {
       meta={meta}
       media={media}
       onRemove={onRemove}
+      onDownloaded={onDownloaded}
       processingLabel={RESULTS_TEXT.soundProcessingLabel}
       fallbackError={RESULTS_TEXT.soundErrorLabel}
     />

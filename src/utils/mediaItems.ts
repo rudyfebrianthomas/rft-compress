@@ -56,6 +56,7 @@ export function createPendingImageItem(
     qualityUsed: quality,
     status: 'processing',
     error: null,
+    downloaded: false,
   }
 }
 
@@ -79,6 +80,7 @@ export function applyImageResult(
     height: result.height,
     qualityUsed: quality,
     error: null,
+    downloaded: false,
   }
 }
 
@@ -103,6 +105,7 @@ export function createPendingSoundItem(
     bitrateUsed: bitrate,
     status: 'processing',
     error: null,
+    downloaded: false,
   }
 }
 
@@ -126,5 +129,6 @@ export function applySoundResult(
     channels: result.channels,
     bitrateUsed: bitrate,
     error: null,
+    downloaded: false,
   }
 }

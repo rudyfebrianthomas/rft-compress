@@ -84,6 +84,7 @@ function App() {
               onQualityChange={setQuality}
               onFilesSelected={imageQueue.handleFilesSelected}
               onRecompressAll={imageQueue.handleRecompressAll}
+              onMarkDownloaded={imageQueue.handleMarkDownloaded}
               onRemoveItem={imageQueue.handleRemoveItem}
               onClearAll={imageQueue.handleClearAll}
             />
@@ -98,6 +99,7 @@ function App() {
               onBitrateChange={setBitrate}
               onFilesSelected={soundQueue.handleFilesSelected}
               onRecompressAll={soundQueue.handleRecompressAll}
+              onMarkDownloaded={soundQueue.handleMarkDownloaded}
               onRemoveItem={soundQueue.handleRemoveItem}
               onClearAll={soundQueue.handleClearAll}
             />

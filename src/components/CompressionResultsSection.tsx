@@ -11,6 +11,7 @@ interface CompressionResultsSectionProps<T extends BaseMediaItem> {
   ariaLabel: string
   renderItem: (item: T) => ReactNode
   onClearAll: () => void
+  onDownloaded?: (ids: string[]) => void
 }
 
 export function CompressionResultsSection<T extends BaseMediaItem>({
@@ -19,6 +20,7 @@ export function CompressionResultsSection<T extends BaseMediaItem>({
   ariaLabel,
   renderItem,
   onClearAll,
+  onDownloaded,
 }: CompressionResultsSectionProps<T>) {
   const [isZipping, setIsZipping] = useState(false)
   const { readyItems, totalOriginal, totalCompressed, overallStats } =
@@ -29,6 +31,7 @@ export function CompressionResultsSection<T extends BaseMediaItem>({
     setIsZipping(true)
     try {
       await downloadItemsAsZip(readyItems, zipFilename)
+      onDownloaded?.(readyItems.map((item) => item.id))
     } finally {
       setIsZipping(false)
     }

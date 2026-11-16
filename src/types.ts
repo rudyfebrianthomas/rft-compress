@@ -17,6 +17,7 @@ export interface BaseMediaItem {
   fallbackPreviewUrl?: string
   status: ItemStatus
   error: string | null
+  downloaded: boolean
 }
 
 export interface ImageItem extends BaseMediaItem {

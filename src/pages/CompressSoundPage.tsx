@@ -13,6 +13,7 @@ interface CompressSoundPageProps {
   onBitrateChange: (bitrate: number) => void
   onFilesSelected: (files: File[]) => void
   onRecompressAll: () => void
+  onMarkDownloaded?: (ids: string[]) => void
   onRemoveItem: (id: string) => void
   onClearAll: () => void
 }
@@ -25,6 +26,7 @@ export function CompressSoundPage({
   onBitrateChange,
   onFilesSelected,
   onRecompressAll,
+  onMarkDownloaded,
   onRemoveItem,
   onClearAll,
 }: CompressSoundPageProps) {
@@ -115,11 +117,13 @@ export function CompressSoundPage({
           zipFilename={SOUND_COMPRESS_CONFIG.zipFilename}
           ariaLabel={SOUND_COMPRESS_CONFIG.resultsAriaLabel}
           onClearAll={onClearAll}
+          onDownloaded={onMarkDownloaded}
           renderItem={(item) => (
             <SoundResultCard
               key={item.id}
               item={item}
               onRemove={onRemoveItem}
+              onDownloaded={(id) => onMarkDownloaded?.([id])}
             />
           )}
         />
