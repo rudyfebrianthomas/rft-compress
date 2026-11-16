@@ -22,10 +22,10 @@ Client-side React + Vite web app for compressing images (WebP and animated GIF) 
 
 ## Tech Stack
 
-- **Framework & Build**: React 19, Vite 8, Tailwind CSS v4 (`@tailwindcss/vite`)
+- **Framework & Build**: React 19, TypeScript, Vite 8, Tailwind CSS v4 (`@tailwindcss/vite`)
 - **UI & Typography**: `motion` (`motion/react`), `@fontsource-variable/commissioner`, `DM Mono`
 - **Compression & Archiving**: `@jsquash/webp`, `gifsicle-wasm-browser`, `@breezystack/lamejs`, `fflate`
-- **Linting**: `oxlint`
+- **Typechecking & Linting**: `tsc -b`, `oxlint`
 
 ## Scripts
 
@@ -33,8 +33,9 @@ Client-side React + Vite web app for compressing images (WebP and animated GIF) 
 npm install      # Install dependencies
 npm run dev      # Start Vite dev server
 npm run build    # Build production bundle to dist/
-npm run preview  # Preview production build locally
+npm run typecheck # Run TypeScript compiler checks
 npm run lint     # Run oxlint across source files
+npm run preview  # Preview production build locally
 ```
 
 ## Project Structure
@@ -42,29 +43,34 @@ npm run lint     # Run oxlint across source files
 ```text
 ├── index.html
 ├── package.json
-├── vite.config.js
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── vite.config.ts
 ├── public/
 │   └── favicon.ico
 └── src/
-    ├── main.jsx
+    ├── main.tsx
     ├── index.css
-    ├── App.jsx
+    ├── types.ts
+    ├── vite-env.d.ts
+    ├── App.tsx
     ├── components/
-    │   ├── CompressionResultsSection.jsx
-    │   ├── DropZone.jsx
-    │   ├── Header.jsx
-    │   ├── ImageResultCard.jsx
-    │   ├── LoadingOverlay.jsx
-    │   ├── ResultRow.jsx
-    │   └── SoundResultCard.jsx
+    │   ├── CompressionResultsSection.tsx
+    │   ├── DropZone.tsx
+    │   ├── Header.tsx
+    │   ├── ImageResultCard.tsx
+    │   ├── LoadingOverlay.tsx
+    │   ├── ResultRow.tsx
+    │   └── SoundResultCard.tsx
     ├── pages/
-    │   ├── AboutPage.jsx
-    │   ├── CompressImagePage.jsx
-    │   ├── CompressSoundPage.jsx
-    │   └── HomePage.jsx
+    │   ├── AboutPage.tsx
+    │   ├── CompressImagePage.tsx
+    │   ├── CompressSoundPage.tsx
+    │   └── HomePage.tsx
     └── utils/
-        ├── compressImage.js
-        ├── compressSound.js
-        ├── download.js
-        └── format.js
+        ├── compressImage.ts
+        ├── compressSound.ts
+        ├── download.ts
+        └── format.ts
 ```

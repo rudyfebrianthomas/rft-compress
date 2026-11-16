@@ -1,6 +1,11 @@
 import { zip } from 'fflate'
 
-export function triggerUrlDownload(url, filename) {
+export interface ZipSourceItem {
+  outputName: string
+  compressedBlob: Blob | null
+}
+
+export function triggerUrlDownload(url: string, filename: string): void {
   const link = document.createElement('a')
   link.href = url
   link.download = filename
@@ -9,7 +14,7 @@ export function triggerUrlDownload(url, filename) {
   document.body.removeChild(link)
 }
 
-export function triggerBlobDownload(blob, filename) {
+export function triggerBlobDownload(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob)
   try {
     triggerUrlDownload(url, filename)
@@ -18,7 +23,10 @@ export function triggerBlobDownload(blob, filename) {
   }
 }
 
-export function getUniqueFilename(filename, usedNames) {
+export function getUniqueFilename(
+  filename: string,
+  usedNames: Set<string>,
+): string {
   if (!usedNames.has(filename)) {
     usedNames.add(filename)
     return filename
@@ -38,9 +46,11 @@ export function getUniqueFilename(filename, usedNames) {
   return candidate
 }
 
-export async function buildZipBytes(items) {
-  const usedNames = new Set()
-  const entries = {}
+export async function buildZipBytes(
+  items: ZipSourceItem[],
+): Promise<Uint8Array<ArrayBuffer>> {
+  const usedNames = new Set<string>()
+  const entries: Record<string, Uint8Array> = {}
 
   for (const item of items) {
     if (!item.compressedBlob) continue
@@ -51,12 +61,15 @@ export async function buildZipBytes(items) {
   return new Promise((resolve, reject) => {
     zip(entries, { level: 0 }, (err, data) => {
       if (err) reject(err)
-      else resolve(data)
+      else resolve(new Uint8Array(data))
     })
   })
 }
 
-export async function downloadItemsAsZip(items, zipFilename) {
+export async function downloadItemsAsZip(
+  items: ZipSourceItem[],
+  zipFilename: string,
+): Promise<void> {
   const zipBytes = await buildZipBytes(items)
   const zipBlob = new Blob([zipBytes], { type: 'application/zip' })
   triggerBlobDownload(zipBlob, zipFilename)

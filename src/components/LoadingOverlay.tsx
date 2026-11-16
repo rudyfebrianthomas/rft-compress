@@ -1,13 +1,21 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect } from 'react'
 
+interface LoadingOverlayProps {
+  visible: boolean
+  completedCount: number
+  totalCount: number
+  currentFileName?: string
+  label?: string
+}
+
 export function LoadingOverlay({
   visible,
   completedCount,
   totalCount,
   currentFileName,
   label = 'Compressing files',
-}) {
+}: LoadingOverlayProps) {
   useEffect(() => {
     if (!visible) return
     const prevOverflow = document.body.style.overflow

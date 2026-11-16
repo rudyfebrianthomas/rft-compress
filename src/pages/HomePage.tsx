@@ -1,6 +1,17 @@
 import { motion } from 'motion/react'
+import type { PageId } from '../types.ts'
 
-const TOOLS = [
+interface HomePageProps {
+  onNavigate: (page: PageId) => void
+}
+
+const TOOLS: Array<{
+  id: Extract<PageId, 'image' | 'sound'>
+  title: string
+  formats: string
+  description: string
+  action: string
+}> = [
   {
     id: 'image',
     title: 'Compress Image',
@@ -17,7 +28,7 @@ const TOOLS = [
   },
 ]
 
-export function HomePage({ onNavigate }) {
+export function HomePage({ onNavigate }: HomePageProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}

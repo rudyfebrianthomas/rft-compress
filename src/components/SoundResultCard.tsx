@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { formatDuration } from '../utils/compressSound.js'
-import { ResultRow } from './ResultRow.jsx'
+import type { SoundItem } from '../types.ts'
+import { formatDuration } from '../utils/compressSound.ts'
+import { ResultRow } from './ResultRow.tsx'
 
-export function SoundResultCard({ item, onRemove }) {
-  const audioRef = useRef(null)
+interface SoundResultCardProps {
+  item: SoundItem
+  onRemove: (id: string) => void
+}
+
+export function SoundResultCard({ item, onRemove }: SoundResultCardProps) {
+  const audioRef = useRef<HTMLAudioElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const isReady = item.status === 'done'
 

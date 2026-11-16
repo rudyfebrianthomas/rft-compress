@@ -1,4 +1,9 @@
 import { motion } from 'motion/react'
+import type { PageId } from '../types.ts'
+
+interface AboutPageProps {
+  onNavigate: (page: PageId) => void
+}
 
 const STEPS = [
   {
@@ -39,7 +44,7 @@ const FORMAT_ROWS = [
   },
 ]
 
-export function AboutPage({ onNavigate }) {
+export function AboutPage({ onNavigate }: AboutPageProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}

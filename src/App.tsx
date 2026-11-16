@@ -1,18 +1,26 @@
 import { MotionConfig } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
-import { Header } from './components/Header.jsx'
-import { LoadingOverlay } from './components/LoadingOverlay.jsx'
-import { AboutPage } from './pages/AboutPage.jsx'
-import { CompressImagePage } from './pages/CompressImagePage.jsx'
-import { CompressSoundPage } from './pages/CompressSoundPage.jsx'
-import { HomePage } from './pages/HomePage.jsx'
-import { compressImageFile, isGifFile } from './utils/compressImage.js'
-import { compressSoundFile, isAudioFile } from './utils/compressSound.js'
-import { partitionNewFiles } from './utils/format.js'
+import { Header } from './components/Header.tsx'
+import { LoadingOverlay } from './components/LoadingOverlay.tsx'
+import { AboutPage } from './pages/AboutPage.tsx'
+import { CompressImagePage } from './pages/CompressImagePage.tsx'
+import { CompressSoundPage } from './pages/CompressSoundPage.tsx'
+import { HomePage } from './pages/HomePage.tsx'
+import type {
+  BaseMediaItem,
+  ImageItem,
+  LoadingState,
+  PageId,
+  SoundItem,
+  ThemeMode,
+} from './types.ts'
+import { compressImageFile, isGifFile } from './utils/compressImage.ts'
+import { compressSoundFile, isAudioFile } from './utils/compressSound.ts'
+import { partitionNewFiles } from './utils/format.ts'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
-function getPageFromHash() {
+function getPageFromHash(): PageId {
   const hash = window.location.hash.toLowerCase()
   if (hash === '#image' || hash === '#images') return 'image'
   if (hash === '#sound' || hash === '#audio') return 'sound'
@@ -20,7 +28,7 @@ function getPageFromHash() {
   return 'home'
 }
 
-function getInitialTheme() {
+function getInitialTheme(): ThemeMode {
   const docTheme = document.documentElement.dataset.theme
   if (docTheme === 'dark' || docTheme === 'light') return docTheme
   const saved = localStorage.getItem('theme')
@@ -30,32 +38,37 @@ function getInitialTheme() {
     : 'light'
 }
 
-function createItemId() {
+function createItemId(): string {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
   }
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-function revokeItemUrls(item) {
+function revokeItemUrls(item: BaseMediaItem): void {
   if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl)
   if (item.fallbackPreviewUrl) URL.revokeObjectURL(item.fallbackPreviewUrl)
 }
 
-function App() {
-  const imageItemsRef = useRef([])
-  const soundItemsRef = useRef([])
+function formatDuplicateNotice(skippedCount: number): string {
+  if (skippedCount <= 0) return ''
+  return `Skipped ${skippedCount} duplicate ${skippedCount === 1 ? 'file' : 'files'} already uploaded.`
+}
 
-  const [currentPage, setCurrentPage] = useState(getPageFromHash)
-  const [theme, setTheme] = useState(getInitialTheme)
-  const [loadingState, setLoadingState] = useState(null)
+function App() {
+  const imageItemsRef = useRef<ImageItem[]>([])
+  const soundItemsRef = useRef<SoundItem[]>([])
+
+  const [currentPage, setCurrentPage] = useState<PageId>(getPageFromHash)
+  const [theme, setTheme] = useState<ThemeMode>(getInitialTheme)
+  const [loadingState, setLoadingState] = useState<LoadingState | null>(null)
 
   const [quality, setQuality] = useState(0.8)
-  const [imageItems, setImageItems] = useState([])
+  const [imageItems, setImageItems] = useState<ImageItem[]>([])
   const [imageDuplicateNote, setImageDuplicateNote] = useState('')
 
   const [bitrate, setBitrate] = useState(128)
-  const [soundItems, setSoundItems] = useState([])
+  const [soundItems, setSoundItems] = useState<SoundItem[]>([])
   const [soundDuplicateNote, setSoundDuplicateNote] = useState('')
 
   useEffect(() => {
@@ -91,7 +104,7 @@ function App() {
     }
   }, [])
 
-  function handleNavigate(page) {
+  function handleNavigate(page: PageId) {
     setCurrentPage(page)
     const nextHash = `#${page}`
     if (window.location.hash !== nextHash) {
@@ -100,7 +113,11 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  async function runBatch(entries, label, runner) {
+  async function runBatch<T extends BaseMediaItem>(
+    entries: T[],
+    label: string,
+    runner: (entry: T) => Promise<void>,
+  ): Promise<void> {
     setLoadingState({
       label,
       total: entries.length,
@@ -126,7 +143,11 @@ function App() {
     }
   }
 
-  async function processImageEntry(id, file, targetQuality) {
+  async function processImageEntry(
+    id: string,
+    file: File,
+    targetQuality: number,
+  ): Promise<void> {
     try {
       const result = await compressImageFile(file, targetQuality)
       const compressedUrl = URL.createObjectURL(result.blob)
@@ -166,12 +187,7 @@ function App() {
     }
   }
 
-  function formatDuplicateNotice(skippedCount) {
-    if (skippedCount <= 0) return ''
-    return `Skipped ${skippedCount} duplicate ${skippedCount === 1 ? 'file' : 'files'} already uploaded.`
-  }
-
-  function handleImageFilesSelected(fileList) {
+  function handleImageFilesSelected(fileList: File[]) {
     const { accepted, skippedCount } = partitionNewFiles(
       fileList,
       imageItems,
@@ -180,7 +196,7 @@ function App() {
     setImageDuplicateNote(formatDuplicateNotice(skippedCount))
     if (accepted.length === 0) return
 
-    const newEntries = accepted.map(({ file, key }) => {
+    const newEntries: ImageItem[] = accepted.map(({ file, key }) => {
       const fallbackPreviewUrl = URL.createObjectURL(file)
       return {
         id: createItemId(),
@@ -203,7 +219,7 @@ function App() {
     })
 
     setImageItems((prev) => [...newEntries, ...prev])
-    runBatch(newEntries, 'Compressing images', (entry) =>
+    void runBatch(newEntries, 'Compressing images', (entry) =>
       processImageEntry(entry.id, entry.file, quality),
     )
   }
@@ -214,12 +230,12 @@ function App() {
     setImageItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
-    runBatch(snapshot, 'Compressing images', (item) =>
+    void runBatch(snapshot, 'Compressing images', (item) =>
       processImageEntry(item.id, item.file, quality),
     )
   }
 
-  function handleRemoveImage(id) {
+  function handleRemoveImage(id: string) {
     setImageDuplicateNote('')
     setImageItems((prev) => {
       const target = prev.find((item) => item.id === id)
@@ -236,7 +252,11 @@ function App() {
     })
   }
 
-  async function processSoundEntry(id, file, targetBitrate) {
+  async function processSoundEntry(
+    id: string,
+    file: File,
+    targetBitrate: number,
+  ): Promise<void> {
     try {
       const result = await compressSoundFile(file, targetBitrate)
       const compressedUrl = URL.createObjectURL(result.blob)
@@ -276,7 +296,7 @@ function App() {
     }
   }
 
-  function handleSoundFilesSelected(fileList) {
+  function handleSoundFilesSelected(fileList: File[]) {
     const { accepted, skippedCount } = partitionNewFiles(
       fileList,
       soundItems,
@@ -285,7 +305,7 @@ function App() {
     setSoundDuplicateNote(formatDuplicateNotice(skippedCount))
     if (accepted.length === 0) return
 
-    const newEntries = accepted.map(({ file, key }) => ({
+    const newEntries: SoundItem[] = accepted.map(({ file, key }) => ({
       id: createItemId(),
       fileKey: key,
       file,
@@ -304,7 +324,7 @@ function App() {
     }))
 
     setSoundItems((prev) => [...newEntries, ...prev])
-    runBatch(newEntries, 'Compressing sound', (entry) =>
+    void runBatch(newEntries, 'Compressing sound', (entry) =>
       processSoundEntry(entry.id, entry.file, bitrate),
     )
   }
@@ -315,12 +335,12 @@ function App() {
     setSoundItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
-    runBatch(snapshot, 'Compressing sound', (item) =>
+    void runBatch(snapshot, 'Compressing sound', (item) =>
       processSoundEntry(item.id, item.file, bitrate),
     )
   }
 
-  function handleRemoveSound(id) {
+  function handleRemoveSound(id: string) {
     setSoundDuplicateNote('')
     setSoundItems((prev) => {
       const target = prev.find((item) => item.id === id)

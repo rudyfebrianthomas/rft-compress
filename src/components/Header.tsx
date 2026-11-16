@@ -1,13 +1,26 @@
 import { motion } from 'motion/react'
+import type { PageId, ThemeMode } from '../types.ts'
 
-const NAV_ITEMS = [
+const NAV_ITEMS: Array<{ id: PageId; label: string }> = [
   { id: 'home', label: 'Home' },
   { id: 'image', label: 'Image' },
   { id: 'sound', label: 'Sound' },
   { id: 'about', label: 'About' },
 ]
 
-export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
+interface HeaderProps {
+  currentPage: PageId
+  onNavigate: (page: PageId) => void
+  theme: ThemeMode
+  onToggleTheme: () => void
+}
+
+export function Header({
+  currentPage,
+  onNavigate,
+  theme,
+  onToggleTheme,
+}: HeaderProps) {
   const isDark = theme === 'dark'
 
   return (

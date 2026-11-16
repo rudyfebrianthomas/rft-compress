@@ -1,7 +1,19 @@
 import { motion } from 'motion/react'
-import { CompressionResultsSection } from '../components/CompressionResultsSection.jsx'
-import { DropZone } from '../components/DropZone.jsx'
-import { ImageResultCard } from '../components/ImageResultCard.jsx'
+import { CompressionResultsSection } from '../components/CompressionResultsSection.tsx'
+import { DropZone } from '../components/DropZone.tsx'
+import { ImageResultCard } from '../components/ImageResultCard.tsx'
+import type { ImageItem } from '../types.ts'
+
+interface CompressImagePageProps {
+  items: ImageItem[]
+  quality: number
+  duplicateNotice?: string
+  onQualityChange: (quality: number) => void
+  onFilesSelected: (files: File[]) => void
+  onRecompressAll: () => void
+  onRemoveItem: (id: string) => void
+  onClearAll: () => void
+}
 
 export function CompressImagePage({
   items,
@@ -12,7 +24,7 @@ export function CompressImagePage({
   onRecompressAll,
   onRemoveItem,
   onClearAll,
-}) {
+}: CompressImagePageProps) {
   const hasStaleQuality = items.some(
     (item) => item.status === 'done' && item.qualityUsed !== quality,
   )

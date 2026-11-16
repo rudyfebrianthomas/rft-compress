@@ -1,15 +1,24 @@
 import { AnimatePresence } from 'motion/react'
-import { useState } from 'react'
-import { downloadItemsAsZip } from '../utils/download.js'
-import { formatBytes, getCompressionStats } from '../utils/format.js'
+import { type ReactNode, useState } from 'react'
+import type { BaseMediaItem } from '../types.ts'
+import { downloadItemsAsZip } from '../utils/download.ts'
+import { formatBytes, getCompressionStats } from '../utils/format.ts'
 
-export function CompressionResultsSection({
+interface CompressionResultsSectionProps<T extends BaseMediaItem> {
+  items: T[]
+  zipFilename: string
+  ariaLabel: string
+  renderItem: (item: T) => ReactNode
+  onClearAll: () => void
+}
+
+export function CompressionResultsSection<T extends BaseMediaItem>({
   items,
   zipFilename,
   ariaLabel,
   renderItem,
   onClearAll,
-}) {
+}: CompressionResultsSectionProps<T>) {
   const [isZipping, setIsZipping] = useState(false)
   const readyItems = items.filter((item) => item.status === 'done')
   const totalOriginal = readyItems.reduce((sum, item) => sum + item.originalSize, 0)

@@ -1,15 +1,33 @@
 import encodeWebp from '@jsquash/webp/encode.js'
 import gifsicle from 'gifsicle-wasm-browser'
-import { replaceExtension } from './format.js'
+import { replaceExtension } from './format.ts'
 
-export function isGifFile(file) {
+export interface CompressedImageResult {
+  blob: Blob
+  width: number
+  height: number
+  outputName: string
+  format: 'WEBP' | 'GIF'
+}
+
+interface DecodedDrawable {
+  drawable: CanvasImageSource
+  width: number
+  height: number
+  cleanup: () => void
+}
+
+export function isGifFile(file: { type: string; name: string }): boolean {
   return (
     file.type === 'image/gif' ||
     file.name.toLowerCase().endsWith('.gif')
   )
 }
 
-async function decodeDrawable(blob, name = 'image') {
+async function decodeDrawable(
+  blob: Blob,
+  name = 'image',
+): Promise<DecodedDrawable> {
   try {
     if (typeof createImageBitmap === 'function') {
       const bitmap = await createImageBitmap(blob)
@@ -25,7 +43,7 @@ async function decodeDrawable(blob, name = 'image') {
   }
 
   const objectUrl = URL.createObjectURL(blob)
-  const img = await new Promise((resolve, reject) => {
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const el = new Image()
     el.onload = () => resolve(el)
     el.onerror = () => reject(new Error(`Unable to decode "${name}".`))
@@ -40,8 +58,15 @@ async function decodeDrawable(blob, name = 'image') {
   }
 }
 
-async function decodeToImageData(file) {
-  const { drawable, width, height, cleanup } = await decodeDrawable(file, file.name)
+async function decodeToImageData(file: File): Promise<{
+  imageData: ImageData
+  width: number
+  height: number
+}> {
+  const { drawable, width, height, cleanup } = await decodeDrawable(
+    file,
+    file.name,
+  )
   try {
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -59,7 +84,10 @@ async function decodeToImageData(file) {
   }
 }
 
-async function getImageDimensions(blob, name) {
+async function getImageDimensions(
+  blob: Blob,
+  name: string,
+): Promise<{ width: number; height: number }> {
   try {
     const { width, height, cleanup } = await decodeDrawable(blob, name)
     cleanup()
@@ -69,7 +97,10 @@ async function getImageDimensions(blob, name) {
   }
 }
 
-export async function compressToWebp(file, quality = 0.8) {
+export async function compressToWebp(
+  file: File,
+  quality = 0.8,
+): Promise<CompressedImageResult> {
   const { imageData, width, height } = await decodeToImageData(file)
   const webpQuality = Math.max(1, Math.min(100, Math.round(quality * 100)))
   const buffer = await encodeWebp(imageData, { quality: webpQuality })
@@ -83,7 +114,10 @@ export async function compressToWebp(file, quality = 0.8) {
   }
 }
 
-export async function compressGif(file, quality = 0.8) {
+export async function compressGif(
+  file: File,
+  quality = 0.8,
+): Promise<CompressedImageResult> {
   const lossy = Math.max(10, Math.min(180, Math.round((1 - quality) * 200)))
   const optLevel = file.size > 5 * 1024 * 1024 ? '-O1' : '-O2'
 
@@ -108,7 +142,10 @@ export async function compressGif(file, quality = 0.8) {
   }
 }
 
-export async function compressImageFile(file, quality = 0.8) {
+export async function compressImageFile(
+  file: File,
+  quality = 0.8,
+): Promise<CompressedImageResult> {
   if (isGifFile(file)) {
     return compressGif(file, quality)
   }

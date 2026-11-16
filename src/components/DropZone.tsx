@@ -1,5 +1,16 @@
 import { motion } from 'motion/react'
-import { useRef, useState } from 'react'
+import { type ChangeEvent, type DragEvent, type KeyboardEvent, useRef, useState } from 'react'
+
+interface DropZoneProps {
+  onFilesSelected: (files: File[]) => void
+  disabled?: boolean
+  accept?: string
+  ariaLabel?: string
+  idleTitle?: string
+  dragTitle?: string
+  formatHint?: string
+  buttonLabel?: string
+}
 
 export function DropZone({
   onFilesSelected,
@@ -10,19 +21,19 @@ export function DropZone({
   dragTitle = 'Drop images to compress',
   formatHint = 'PNG · JPG · WEBP · BMP · AVIF → WEBP / GIF → GIF',
   buttonLabel = 'Select images',
-}) {
-  const inputRef = useRef(null)
+}: DropZoneProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
   const dragDepthRef = useRef(0)
   const [isDragging, setIsDragging] = useState(false)
 
-  function handleDragEnter(e) {
+  function handleDragEnter(e: DragEvent<HTMLDivElement>) {
     e.preventDefault()
     e.stopPropagation()
     dragDepthRef.current += 1
     setIsDragging(true)
   }
 
-  function handleDragOver(e) {
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
     e.preventDefault()
     e.stopPropagation()
     if (e.dataTransfer) {
@@ -30,7 +41,7 @@ export function DropZone({
     }
   }
 
-  function handleDragLeave(e) {
+  function handleDragLeave(e: DragEvent<HTMLDivElement>) {
     e.preventDefault()
     e.stopPropagation()
     dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
@@ -39,21 +50,21 @@ export function DropZone({
     }
   }
 
-  function handleDrop(e) {
+  function handleDrop(e: DragEvent<HTMLDivElement>) {
     e.preventDefault()
     e.stopPropagation()
     dragDepthRef.current = 0
     setIsDragging(false)
     if (disabled) return
 
-    const files = Array.from(e.dataTransfer?.files || [])
+    const files = Array.from(e.dataTransfer?.files ?? [])
     if (files.length > 0) {
       onFilesSelected(files)
     }
   }
 
-  function handleInputChange(e) {
-    const files = Array.from(e.target.files || [])
+  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? [])
     if (files.length > 0) {
       onFilesSelected(files)
     }
@@ -66,7 +77,7 @@ export function DropZone({
     }
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
       openPicker()

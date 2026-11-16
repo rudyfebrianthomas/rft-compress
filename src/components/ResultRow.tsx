@@ -1,6 +1,17 @@
 import { motion } from 'motion/react'
-import { triggerUrlDownload } from '../utils/download.js'
-import { formatBytes, getCompressionStats } from '../utils/format.js'
+import type { ReactNode } from 'react'
+import type { BaseMediaItem } from '../types.ts'
+import { triggerUrlDownload } from '../utils/download.ts'
+import { formatBytes, getCompressionStats } from '../utils/format.ts'
+
+interface ResultRowProps {
+  item: BaseMediaItem
+  meta?: string
+  media: ReactNode
+  onRemove: (id: string) => void
+  processingLabel?: string
+  fallbackError?: string
+}
 
 export function ResultRow({
   item,
@@ -9,7 +20,7 @@ export function ResultRow({
   onRemove,
   processingLabel = 'Compressing…',
   fallbackError = 'Could not compress this file.',
-}) {
+}: ResultRowProps) {
   const isReady = item.status === 'done'
   const isError = item.status === 'error'
   const stats = isReady

@@ -1,6 +1,12 @@
-import { ResultRow } from './ResultRow.jsx'
+import type { ImageItem } from '../types.ts'
+import { ResultRow } from './ResultRow.tsx'
 
-export function ImageResultCard({ item, onRemove }) {
+interface ImageResultCardProps {
+  item: ImageItem
+  onRemove: (id: string) => void
+}
+
+export function ImageResultCard({ item, onRemove }: ImageResultCardProps) {
   const meta =
     item.width > 0 && item.height > 0 ? `${item.width}×${item.height}` : ''
 

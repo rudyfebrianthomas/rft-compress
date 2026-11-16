@@ -1,9 +1,21 @@
 import { motion } from 'motion/react'
-import { CompressionResultsSection } from '../components/CompressionResultsSection.jsx'
-import { DropZone } from '../components/DropZone.jsx'
-import { SoundResultCard } from '../components/SoundResultCard.jsx'
+import { CompressionResultsSection } from '../components/CompressionResultsSection.tsx'
+import { DropZone } from '../components/DropZone.tsx'
+import { SoundResultCard } from '../components/SoundResultCard.tsx'
+import type { SoundItem } from '../types.ts'
 
-const BITRATE_OPTIONS = [64, 96, 128, 192]
+const BITRATE_OPTIONS = [64, 96, 128, 192] as const
+
+interface CompressSoundPageProps {
+  items: SoundItem[]
+  bitrate: number
+  duplicateNotice?: string
+  onBitrateChange: (bitrate: number) => void
+  onFilesSelected: (files: File[]) => void
+  onRecompressAll: () => void
+  onRemoveItem: (id: string) => void
+  onClearAll: () => void
+}
 
 export function CompressSoundPage({
   items,
@@ -14,7 +26,7 @@ export function CompressSoundPage({
   onRecompressAll,
   onRemoveItem,
   onClearAll,
-}) {
+}: CompressSoundPageProps) {
   const hasStaleBitrate = items.some(
     (item) => item.status === 'done' && item.bitrateUsed !== bitrate,
   )
