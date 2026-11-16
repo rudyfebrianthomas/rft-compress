@@ -10,6 +10,16 @@ function getPageFromHash() {
   return window.location.hash === '#about' ? 'about' : 'home'
 }
 
+function getInitialTheme() {
+  const docTheme = document.documentElement.dataset.theme
+  if (docTheme === 'dark' || docTheme === 'light') return docTheme
+  const saved = localStorage.getItem('theme')
+  if (saved === 'dark' || saved === 'light') return saved
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
+}
+
 function createItemId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
@@ -26,8 +36,19 @@ function App() {
   const lenisRef = useRef(null)
   const itemsRef = useRef([])
   const [currentPage, setCurrentPage] = useState(getPageFromHash)
+  const [theme, setTheme] = useState(getInitialTheme)
   const [quality, setQuality] = useState(0.8)
   const [items, setItems] = useState([])
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document.documentElement.style.colorScheme = theme
+    localStorage.setItem('theme', theme)
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) {
+      meta.setAttribute('content', theme === 'dark' ? '#18181b' : '#ffffff')
+    }
+  }, [theme])
 
   useEffect(() => {
     itemsRef.current = items
@@ -168,7 +189,14 @@ function App() {
     <MotionConfig reducedMotion="user">
       <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
         <div className="flex min-h-screen flex-col bg-bg text-ink">
-          <Header currentPage={currentPage} onNavigate={handleNavigate} />
+          <Header
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+            theme={theme}
+            onToggleTheme={() =>
+              setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+            }
+          />
 
           <main
             id="main-content"

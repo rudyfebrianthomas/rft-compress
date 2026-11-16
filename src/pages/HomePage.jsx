@@ -130,7 +130,7 @@ export function HomePage({
               <button
                 type="button"
                 onClick={onClearAll}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-bg px-4 text-sm font-medium text-ink transition-colors hover:border-white/30 hover:bg-surface-elevated active:scale-[0.98]"
+                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-bg px-4 text-sm font-medium text-ink transition-colors hover:border-border-strong hover:bg-surface-elevated active:scale-[0.98]"
               >
                 Clear all
               </button>

@@ -1,17 +1,50 @@
 @import "tailwindcss";
 
-@theme {
+:root,
+[data-theme="light"] {
+  --theme-bg: #ffffff;
+  --theme-surface: #f4f4f5;
+  --theme-surface-elevated: #e4e4e7;
+  --theme-ink: #18181b;
+  --theme-muted: #52525b;
+  --theme-accent: #18181b;
+  --theme-accent-ink: #ffffff;
+  --theme-border: rgba(24, 24, 27, 0.14);
+  --theme-border-strong: rgba(24, 24, 27, 0.28);
+  --theme-error: #b91c1c;
+  --theme-checker-bg: #f4f4f5;
+  --theme-checker-tile: rgba(24, 24, 27, 0.07);
+}
+
+[data-theme="dark"] {
+  --theme-bg: #18181b;
+  --theme-surface: #27272a;
+  --theme-surface-elevated: #323238;
+  --theme-ink: #ffffff;
+  --theme-muted: #a1a1aa;
+  --theme-accent: #ffffff;
+  --theme-accent-ink: #18181b;
+  --theme-border: rgba(255, 255, 255, 0.14);
+  --theme-border-strong: rgba(255, 255, 255, 0.28);
+  --theme-error: #fca5a5;
+  --theme-checker-bg: #202024;
+  --theme-checker-tile: rgba(255, 255, 255, 0.06);
+}
+
+@theme inline {
   --font-sans: "Urbanist", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --color-bg: #0f1f10;
-  --color-surface: #162a17;
-  --color-surface-elevated: #1c351e;
-  --color-ink: #ffffff;
-  --color-muted: #9aa39a;
-  --color-accent: #c6f19d;
-  --color-accent-ink: #0f1f10;
-  --color-border: rgba(255, 255, 255, 0.12);
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-elevated: var(--theme-surface-elevated);
+  --color-ink: var(--theme-ink);
+  --color-muted: var(--theme-muted);
+  --color-accent: var(--theme-accent);
+  --color-accent-ink: var(--theme-accent-ink);
+  --color-border: var(--theme-border);
+  --color-border-strong: var(--theme-border-strong);
+  --color-error: var(--theme-error);
 }
 
 @layer base {
@@ -23,6 +56,7 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 150ms ease, color 150ms ease;
   }
 
   button,
@@ -55,12 +89,12 @@
 }
 
 .checker-bg {
-  background-color: #132414;
+  background-color: var(--theme-checker-bg);
   background-image:
-    linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
-    linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+    linear-gradient(45deg, var(--theme-checker-tile) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--theme-checker-tile) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--theme-checker-tile) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--theme-checker-tile) 75%);
   background-size: 16px 16px;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
 }

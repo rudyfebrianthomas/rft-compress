@@ -92,7 +92,7 @@ export function ImageResultCard({ item, onRemove }) {
           )}
 
           {isError && (
-            <p className="text-sm text-red-300">
+            <p className="text-sm text-error">
               {item.error || 'Could not compress this image.'}
             </p>
           )}
@@ -112,7 +112,7 @@ export function ImageResultCard({ item, onRemove }) {
           type="button"
           onClick={() => onRemove(item.id)}
           aria-label={`Remove ${item.outputName}`}
-          className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-bg px-4 text-sm font-medium text-ink transition-colors hover:border-white/30 hover:bg-surface-elevated active:scale-[0.98]"
+          className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-bg px-4 text-sm font-medium text-ink transition-colors hover:border-border-strong hover:bg-surface-elevated active:scale-[0.98]"
         >
           Remove
         </button>

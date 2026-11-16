@@ -80,7 +80,7 @@ export function DropZone({ onFilesSelected, disabled = false }) {
       className={`group relative flex min-h-[260px] w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 text-center transition-colors sm:min-h-[300px] ${
         isDragging
           ? 'border-accent bg-accent/10'
-          : 'border-white/20 bg-surface hover:border-accent/60 hover:bg-surface-elevated'
+          : 'border-border-strong bg-surface hover:border-accent/60 hover:bg-surface-elevated'
       }`}
     >
       <input
