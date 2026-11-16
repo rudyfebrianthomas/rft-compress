@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'image', label: 'Image' },
   { id: 'sound', label: 'Sound' },
+  { id: 'about', label: 'About' },
 ]
 
 export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
@@ -14,14 +15,14 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-3 px-6 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-2 px-6 sm:gap-3 sm:px-8">
         <a
           href="#home"
           onClick={(e) => {
             e.preventDefault()
             onNavigate('home')
           }}
-          className="inline-flex min-h-[44px] min-w-0 items-center gap-2.5 font-display text-[15px] font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:text-base"
+          className="inline-flex min-h-[44px] min-w-0 items-center gap-2 font-display text-sm font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:gap-2.5 sm:text-base"
         >
           <svg
             width="18"
@@ -51,8 +52,8 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
           <span className="truncate">RFT Compress</span>
         </a>
 
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <nav aria-label="Primary" className="flex items-center gap-0.5 sm:gap-1">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <nav aria-label="Primary" className="flex items-center gap-0.5">
             {NAV_ITEMS.map((item) => {
               const isActive = currentPage === item.id
               return (
@@ -64,7 +65,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                     e.preventDefault()
                     onNavigate(item.id)
                   }}
-                  className={`relative inline-flex min-h-[44px] items-center rounded-full px-3 text-sm font-medium transition-colors sm:px-4 ${
+                  className={`relative inline-flex min-h-[44px] items-center rounded-full px-2.5 text-xs font-medium transition-colors sm:px-3.5 sm:text-sm ${
                     isActive
                       ? 'text-accent-ink'
                       : 'text-muted hover:text-ink'

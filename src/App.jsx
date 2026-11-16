@@ -2,6 +2,7 @@ import { ReactLenis } from 'lenis/react'
 import { MotionConfig, cancelFrame, frame } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Header } from './components/Header.jsx'
+import { AboutPage } from './pages/AboutPage.jsx'
 import { CompressImagePage } from './pages/CompressImagePage.jsx'
 import { CompressSoundPage } from './pages/CompressSoundPage.jsx'
 import { HomePage } from './pages/HomePage.jsx'
@@ -14,6 +15,7 @@ function getPageFromHash() {
   const hash = window.location.hash.toLowerCase()
   if (hash === '#image' || hash === '#images') return 'image'
   if (hash === '#sound' || hash === '#audio') return 'sound'
+  if (hash === '#about') return 'about'
   return 'home'
 }
 
@@ -331,6 +333,10 @@ function App() {
                 onRemoveItem={handleRemoveSound}
                 onClearAll={handleClearSounds}
               />
+            )}
+
+            {currentPage === 'about' && (
+              <AboutPage onNavigate={handleNavigate} />
             )}
 
             {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
