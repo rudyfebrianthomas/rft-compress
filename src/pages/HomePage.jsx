@@ -49,7 +49,7 @@ export function HomePage({
     >
       <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2.5">
-          <h1 className="text-3xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
+          <h1 className="font-display text-3xl font-normal tracking-normal text-ink sm:text-5xl">
             Compress images to WebP and GIF
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-muted">
