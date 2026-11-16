@@ -200,7 +200,7 @@ function App() {
 
           <main
             id="main-content"
-            className="mx-auto w-full max-w-5xl flex-1 px-6 py-12 sm:px-8 sm:py-16"
+            className="mx-auto w-full max-w-4xl flex-1 px-6 py-12 sm:px-8 sm:py-16"
           >
             {currentPage === 'about' ? (
               <AboutPage onGoHome={() => handleNavigate('home')} />
@@ -218,10 +218,10 @@ function App() {
           </main>
 
           <footer className="border-t border-border">
-            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-sm text-muted sm:px-8">
-              <span>RFT Compress Images — Local WebP and GIF compression</span>
+            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2 px-6 py-6 text-xs text-muted sm:px-8 sm:text-sm">
+              <span>RFT Compress Images</span>
               <span className="font-mono text-xs">
-                Runs in your browser. Zero uploads.
+                Local WebP &amp; GIF compression
               </span>
             </div>
           </footer>

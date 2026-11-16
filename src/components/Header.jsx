@@ -9,46 +9,48 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
   const isDark = theme === 'dark'
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-bg transition-colors">
+    <header className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur-md transition-colors">
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-6 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-4 px-6 sm:px-8">
         <a
           href="#home"
           onClick={(e) => {
             e.preventDefault()
             onNavigate('home')
           }}
-          className="inline-flex min-h-[44px] min-w-0 items-center gap-2.5 text-base font-semibold tracking-tight text-ink transition-opacity hover:opacity-85 sm:text-lg"
+          className="inline-flex min-h-[44px] min-w-0 items-center gap-2.5 text-[15px] font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:text-base"
         >
-          <span
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
             aria-hidden="true"
-            className="grid h-7 w-7 shrink-0 place-items-center rounded-md border border-border-strong bg-surface text-ink"
+            className="shrink-0 text-ink"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect
-                x="2"
-                y="2"
-                width="12"
-                height="12"
-                rx="2"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              />
-              <path
-                d="M5 10.5L7.5 8L9.5 10L11 8.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
+            <rect
+              x="2"
+              y="2"
+              width="14"
+              height="14"
+              rx="3.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M5.5 11.5L8.25 8.75L10.25 10.75L12.5 8.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           <span className="truncate">RFT Compress Images</span>
         </a>
 
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-2">
           <nav aria-label="Primary" className="flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
               const isActive = currentPage === item.id
@@ -61,7 +63,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                     e.preventDefault()
                     onNavigate(item.id)
                   }}
-                  className={`relative inline-flex min-h-[44px] items-center rounded-md px-3.5 text-[15px] font-medium transition-colors sm:px-4 ${
+                  className={`relative inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-medium transition-colors ${
                     isActive
                       ? 'text-accent-ink'
                       : 'text-muted hover:text-ink'
@@ -70,8 +72,8 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                   {isActive && (
                     <motion.span
                       layoutId="nav-active-pill"
-                      transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                      className="absolute inset-0 rounded-md bg-accent"
+                      transition={{ type: 'spring', stiffness: 460, damping: 36 }}
+                      className="absolute inset-y-1.5 inset-x-0 rounded-full bg-accent"
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
@@ -80,15 +82,17 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
             })}
           </nav>
 
+          <span aria-hidden="true" className="h-4 w-px bg-border" />
+
           <button
             type="button"
             onClick={onToggleTheme}
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-md border border-border bg-surface text-ink transition-colors hover:border-border-strong hover:bg-surface-elevated active:scale-[0.98]"
+            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.96]"
           >
             {isDark ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.75" />
                 <path
                   d="M12 2.5V5M12 19V21.5M4.93 4.93L6.7 6.7M17.3 17.3L19.07 19.07M2.5 12H5M19 12H21.5M4.93 19.07L6.7 17.3M17.3 6.7L19.07 4.93"
@@ -98,7 +102,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                 />
               </svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M20.354 15.354A8.5 8.5 0 0 1 8.646 3.646 8.5 8.5 0 1 0 20.354 15.354Z"
                   stroke="currentColor"

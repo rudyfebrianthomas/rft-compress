@@ -42,102 +42,106 @@ export function HomePage({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
       className="space-y-10"
     >
-      <section className="space-y-4">
-        <h1 className="max-w-3xl text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
-          Compress images to WebP and GIF
-        </h1>
-        <p className="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-          Shrink PNG, JPG, WebP, BMP, and animated GIF files directly in your
-          browser with zero server uploads.
-        </p>
-      </section>
+      <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2.5">
+          <h1 className="text-3xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
+            Compress images to WebP and GIF
+          </h1>
+          <p className="max-w-xl text-base leading-relaxed text-muted">
+            Fast, private compression inside your browser. Nothing is uploaded.
+          </p>
+        </div>
 
-      <section aria-label="Upload and quality settings" className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-surface px-5 py-3.5">
-          <div className="flex flex-wrap items-center gap-4">
-            <label
-              htmlFor="quality-range"
-              className="text-sm font-medium text-ink"
-            >
-              Compression quality
-            </label>
-            <input
-              id="quality-range"
-              type="range"
-              min="30"
-              max="95"
-              step="5"
-              value={Math.round(quality * 100)}
-              onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
-              className="h-2 w-40 cursor-pointer accent-accent sm:w-52"
-            />
-            <span className="rounded border border-border bg-bg px-2.5 py-1 font-mono text-sm font-medium text-accent tabular-nums">
-              {Math.round(quality * 100)}%
-            </span>
-          </div>
-
+        <div className="flex shrink-0 flex-wrap items-center gap-3">
+          <label
+            htmlFor="quality-range"
+            className="text-sm font-medium text-muted"
+          >
+            Quality
+          </label>
+          <input
+            id="quality-range"
+            type="range"
+            min="30"
+            max="95"
+            step="5"
+            value={Math.round(quality * 100)}
+            onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
+            className="h-1.5 w-32 cursor-pointer accent-accent sm:w-36"
+          />
+          <span className="min-w-[3.25rem] text-right font-mono text-sm font-medium text-ink tabular-nums">
+            {Math.round(quality * 100)}%
+          </span>
           {hasStaleQuality && (
             <button
               type="button"
               onClick={onRecompressAll}
-              className="inline-flex min-h-[44px] cursor-pointer items-center rounded-lg border border-accent/50 bg-bg px-4 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-accent-ink active:scale-[0.98]"
+              className="inline-flex min-h-[36px] cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
             >
-              Apply {Math.round(quality * 100)}% to existing images
+              Re-apply
             </button>
           )}
         </div>
+      </section>
 
+      <section aria-label="Image upload dropzone">
         <DropZone onFilesSelected={onFilesSelected} />
       </section>
 
       {items.length > 0 && (
-        <section aria-label="Compressed images" className="space-y-5">
-          <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+        <section aria-label="Compressed images" className="space-y-4">
+          <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <h2 className="text-xl font-medium tracking-tight text-ink">
-                Uploaded images ({items.length})
+              <h2 className="text-lg font-medium tracking-tight text-ink">
+                Results ({items.length})
               </h2>
               {overallStats ? (
-                <p className="font-mono text-sm text-muted tabular-nums">
-                  {formatBytes(totalOriginal)} → {formatBytes(totalCompressed)} ·{' '}
+                <p className="font-mono text-xs text-muted tabular-nums sm:text-sm">
+                  {formatBytes(totalOriginal)} →{' '}
+                  <strong className="font-medium text-ink">
+                    {formatBytes(totalCompressed)}
+                  </strong>{' '}
+                  ·{' '}
                   <span
                     className={
-                      overallStats.savedBytes > 0 ? 'text-accent' : 'text-muted'
+                      overallStats.savedBytes > 0 ? 'text-ink' : 'text-muted'
                     }
                   >
                     {overallStats.description}
                   </span>
                 </p>
               ) : (
-                <p className="text-sm text-muted">Processing uploaded files…</p>
+                <p className="text-xs text-muted sm:text-sm">
+                  Processing uploaded files…
+                </p>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleDownloadAll}
                 disabled={readyItems.length === 0}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg bg-accent px-4 text-sm font-medium text-accent-ink transition-transform hover:brightness-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
               >
                 Download all ({readyItems.length})
               </button>
               <button
                 type="button"
                 onClick={onClearAll}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-border bg-bg px-4 text-sm font-medium text-ink transition-colors hover:border-border-strong hover:bg-surface-elevated active:scale-[0.98]"
+                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
               >
-                Clear all
+                Clear
               </button>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="overflow-hidden rounded-2xl border border-border bg-surface/50 divide-y divide-border">
             <AnimatePresence initial={false}>
               {items.map((item) => (
                 <ImageResultCard

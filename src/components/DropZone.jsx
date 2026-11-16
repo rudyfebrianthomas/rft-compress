@@ -75,12 +75,12 @@ export function DropZone({ onFilesSelected, disabled = false }) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      animate={{ scale: isDragging ? 1.008 : 1 }}
+      animate={{ scale: isDragging ? 1.006 : 1 }}
       transition={{ duration: 0.16, ease: 'easeOut' }}
-      className={`group relative flex min-h-[260px] w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-12 text-center transition-colors sm:min-h-[300px] ${
+      className={`group relative flex min-h-[280px] w-full cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed px-6 py-14 text-center transition-all sm:min-h-[320px] ${
         isDragging
-          ? 'border-accent bg-accent/10'
-          : 'border-border-strong bg-surface hover:border-accent/60 hover:bg-surface-elevated'
+          ? 'border-accent bg-accent/[0.06]'
+          : 'border-border-strong bg-surface/60 hover:border-ink/45 hover:bg-surface'
       }`}
     >
       <input
@@ -93,15 +93,15 @@ export function DropZone({ onFilesSelected, disabled = false }) {
       />
 
       <div
-        className={`mb-5 grid h-14 w-14 place-items-center rounded-lg border transition-colors ${
+        className={`mb-5 grid h-12 w-12 place-items-center rounded-full border transition-colors ${
           isDragging
             ? 'border-accent bg-accent text-accent-ink'
-            : 'border-border bg-bg text-accent group-hover:border-accent/50'
+            : 'border-border bg-bg text-ink group-hover:border-border-strong'
         }`}
       >
         <svg
-          width="26"
-          height="26"
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
@@ -123,17 +123,14 @@ export function DropZone({ onFilesSelected, disabled = false }) {
       </div>
 
       <p className="text-xl font-medium tracking-tight text-ink sm:text-2xl">
-        {isDragging
-          ? 'Drop images to start compressing'
-          : 'Drag and drop images here, or click to select'}
+        {isDragging ? 'Drop images to compress' : 'Drop images here or browse'}
       </p>
-      <p className="mt-2 max-w-lg text-base text-muted">
-        PNG, JPG, WebP, BMP, and AVIF convert to WebP. GIF files compress as
-        animated GIF. Multiple files supported.
+      <p className="mt-2 font-mono text-xs tracking-wide text-muted">
+        PNG · JPG · WEBP · BMP · AVIF → WEBP &nbsp;/&nbsp; GIF → GIF
       </p>
 
-      <span className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-accent px-5 text-base font-medium text-accent-ink transition-transform group-active:scale-[0.98]">
-        Choose images
+      <span className="mt-7 inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-transform group-hover:opacity-90 group-active:scale-[0.98]">
+        Select images
       </span>
     </motion.div>
   )
