@@ -4,12 +4,12 @@ Client-side image and audio compression web application built with React, TypeSc
 
 ## Features
 
-- **Home (`/`)**: Tool selector linking to the image compressor (`/image`), sound compressor (`/sound`), and format guide (`/about`).
+- **Home (`/`)**: Tool selector linking to the image compressor (`/image`), audio compressor (`/sound`), and format guide (`/about`).
 - **Compress Image (`/image`)**:
   - Drag-and-drop or multi-file picker accepting `PNG`, `JPG`, `JPEG`, `WebP`, `BMP`, `AVIF`, and `GIF`.
   - Encodes raster images to `.webp` via `@jsquash/webp` (preserving alpha transparency) and optimizes animated `.gif` files via `gifsicle-wasm-browser` (`-O2` up to 5 MB, `-O1` above 5 MB, mapped lossy `10` to `180`).
   - Quality slider (`30%` to `95%` in `5%` increments, default `80%`) with `Re-apply` batch re-compression, thumbnail previews, dimensions, byte savings, individual downloads, and `compressed-images.zip` batch export.
-- **Compress Sound (`/sound`)**:
+- **Compress Audio (`/sound`)**:
   - Drag-and-drop or multi-file picker accepting `WAV`, `MP3`, `OGG`, `FLAC`, `M4A`, `AAC`, `WebM`, `OPUS`, `AIFF`, and `WMA`.
   - Decodes audio with the Web Audio API, resamples unsupported rates to `44.1 kHz` via `OfflineAudioContext`, and encodes `.mp3` via `@breezystack/lamejs`.
   - Bitrate selector (`64k`, `96k`, `128k`, `192k`, default `128k`) with `Re-apply`, inline play/pause audio preview, duration/sample-rate/channel metadata, and `compressed-sound.zip` batch export.

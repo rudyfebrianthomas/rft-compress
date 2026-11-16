@@ -9,7 +9,7 @@ export interface HomeToolCard {
 }
 
 export const HOME_TEXT = {
-  title: 'Compress images and sound',
+  title: 'Compress images and audio',
   subtitle:
     'Local WebP, GIF, and MP3 compression in your browser. Zero server uploads.',
   aboutLinkLabel: 'How it works & supported formats →',
@@ -24,10 +24,10 @@ export const HOME_TEXT = {
     },
     {
       id: 'sound',
-      title: 'Compress Sound',
+      title: 'Compress Audio',
       formats: 'WAV · MP3 · OGG · FLAC · M4A',
       description: 'Encode audio files into smaller MP3s by bitrate.',
-      action: 'Compress sound',
+      action: 'Compress audio',
     },
   ] satisfies ReadonlyArray<HomeToolCard>,
 } as const
@@ -35,7 +35,7 @@ export const HOME_TEXT = {
 export const ABOUT_TEXT = {
   title: 'About RFT Compress',
   description:
-    'RFT Compress is a browser-based media compressor for images and sound. All encoding runs locally in memory on your device, so files never leave your browser.',
+    'RFT Compress is a browser-based media compressor for images and audio. All encoding runs locally in memory on your device, so files never leave your browser.',
   howToUseHeading: 'How to use',
   formatsHeading: 'Supported formats',
   formatColumns: {
@@ -46,9 +46,9 @@ export const ABOUT_TEXT = {
   steps: [
     {
       step: '01',
-      title: 'Pick Image or Sound',
+      title: 'Pick Image or Audio',
       detail:
-        'Open Image or Sound from the navigation bar and choose your target quality or MP3 bitrate.',
+        'Open Image or Audio from the navigation bar and choose your target quality or MP3 bitrate.',
     },
     {
       step: '02',
@@ -82,6 +82,6 @@ export const ABOUT_TEXT = {
   ],
   actions: {
     image: 'Compress images',
-    sound: 'Compress sound',
+    sound: 'Compress audio',
   },
 } as const

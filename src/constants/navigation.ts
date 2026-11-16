@@ -13,7 +13,7 @@ export const SITE_TEXT = {
   navAriaLabel: 'Primary',
   themeSwitchToLight: 'Switch to light theme',
   themeSwitchToDark: 'Switch to dark theme',
-  footerTagline: 'Local Image & Sound',
+  footerTagline: 'Local Image & Audio',
 } as const
 
 export const NAV_ITEMS: ReadonlyArray<{
@@ -23,6 +23,6 @@ export const NAV_ITEMS: ReadonlyArray<{
 }> = [
   { id: 'home', label: 'Home', path: PAGE_ROUTES.home },
   { id: 'image', label: 'Image', path: PAGE_ROUTES.image },
-  { id: 'sound', label: 'Sound', path: PAGE_ROUTES.sound },
+  { id: 'sound', label: 'Audio', path: PAGE_ROUTES.sound },
   { id: 'about', label: 'About', path: PAGE_ROUTES.about },
 ]

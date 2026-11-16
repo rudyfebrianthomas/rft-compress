@@ -21,7 +21,7 @@ describe('App routing', () => {
   it('navigates between /, /image, /sound, and /about paths', () => {
     render(<App />)
     expect(
-      screen.getByRole('heading', { name: 'Compress images and sound' }),
+      screen.getByRole('heading', { name: 'Compress images and audio' }),
     ).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('link', { name: 'Image' }))
@@ -30,10 +30,10 @@ describe('App routing', () => {
       screen.getByRole('heading', { name: 'Compress images to WebP and GIF' }),
     ).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('link', { name: 'Sound' }))
+    fireEvent.click(screen.getByRole('link', { name: 'Audio' }))
     expect(window.location.pathname).toBe('/sound')
     expect(
-      screen.getByRole('heading', { name: 'Compress sound to MP3' }),
+      screen.getByRole('heading', { name: 'Compress audio to MP3' }),
     ).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('link', { name: 'About' }))
@@ -49,7 +49,7 @@ describe('App routing', () => {
 
     expect(window.location.pathname).toBe('/')
     expect(
-      screen.getByRole('heading', { name: 'Compress images and sound' }),
+      screen.getByRole('heading', { name: 'Compress images and audio' }),
     ).toBeInTheDocument()
   })
 })

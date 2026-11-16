@@ -23,17 +23,17 @@ export const IMAGE_COMPRESS_CONFIG = {
 } as const
 
 export const SOUND_COMPRESS_CONFIG = {
-  title: 'Compress sound to MP3',
+  title: 'Compress audio to MP3',
   subtitle:
     'Shrink WAV, MP3, OGG, FLAC, and M4A audio in your browser. Nothing is uploaded.',
-  sectionAriaLabel: 'Sound upload and bitrate',
+  sectionAriaLabel: 'Audio upload and bitrate',
   bitrateLabel: 'Bitrate',
   bitrateAriaLabel: 'MP3 bitrate',
   bitrateOptions: [64, 96, 128, 192] as const,
   reapplyLabel: 'Re-apply',
   zipFilename: 'compressed-sound.zip',
   resultsAriaLabel: 'Compressed audio files',
-  loadingLabel: 'Compressing sound',
+  loadingLabel: 'Compressing audio',
   allowedFormatsLabel: 'WAV, MP3, OGG, FLAC, M4A, AAC, WebM',
   channelLabels: {
     mono: 'Mono',
