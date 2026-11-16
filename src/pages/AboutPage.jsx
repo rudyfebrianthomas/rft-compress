@@ -44,10 +44,10 @@ export function AboutPage({ onGoHome }) {
     >
       <section className="space-y-4">
         <h1 className="max-w-3xl text-4xl font-medium tracking-[-0.04em] text-ink sm:text-5xl">
-          About Rudy Febrianthomas Compress Images
+          About RFT Compress Images
         </h1>
         <p className="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-          Rudy Febrianthomas Compress Images is a client-side image compressor built for two everyday web
+          RFT Compress Images is a client-side image compressor built for two everyday web
           formats: converting photos and graphics into compact WebP files, and
           reducing animated or static GIF file sizes without leaving your
           browser.

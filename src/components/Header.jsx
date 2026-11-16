@@ -43,7 +43,7 @@ export function Header({ currentPage, onNavigate }) {
               />
             </svg>
           </span>
-          <span className="truncate">Rudy Febrianthomas Compress Images</span>
+          <span className="truncate">RFT Compress Images</span>
         </a>
 
         <nav aria-label="Primary" className="flex shrink-0 items-center gap-1">
