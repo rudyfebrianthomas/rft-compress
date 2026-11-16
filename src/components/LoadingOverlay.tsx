@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect } from 'react'
+import { RESULTS_TEXT } from '../constants/compression.ts'
 
 interface LoadingOverlayProps {
   visible: boolean
@@ -14,7 +15,7 @@ export function LoadingOverlay({
   completedCount,
   totalCount,
   currentFileName,
-  label = 'Compressing files',
+  label = RESULTS_TEXT.defaultLoadingLabel,
 }: LoadingOverlayProps) {
   useEffect(() => {
     if (!visible) return
@@ -49,7 +50,7 @@ export function LoadingOverlay({
                 {label}
               </p>
               <p className="font-mono text-xs text-muted tabular-nums">
-                {completedCount} / {totalCount} completed
+                {completedCount} / {totalCount} {RESULTS_TEXT.completedSuffix}
               </p>
               {currentFileName && (
                 <p className="truncate font-mono text-xs text-muted">

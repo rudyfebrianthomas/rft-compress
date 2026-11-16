@@ -40,3 +40,22 @@ export const SOUND_COMPRESS_CONFIG = {
     buttonLabel: 'Select audio',
   },
 } as const
+
+export const RESULTS_TEXT = {
+  headingPrefix: 'Results',
+  emptyMessage: 'No compressed files available.',
+  zippingLabel: 'Zipping…',
+  downloadAllLabel: 'Download all',
+  zipSuffix: '.zip',
+  clearLabel: 'Clear',
+  downloadLabel: 'Download',
+  defaultProcessingLabel: 'Compressing…',
+  defaultErrorLabel: 'Could not compress this file.',
+  imageProcessingLabel: 'Compressing…',
+  imageErrorLabel: 'Could not compress this image.',
+  soundProcessingLabel: 'Encoding MP3…',
+  soundErrorLabel: 'Could not compress this audio file.',
+  defaultLoadingLabel: 'Compressing files',
+  completedSuffix: 'completed',
+} as const
+

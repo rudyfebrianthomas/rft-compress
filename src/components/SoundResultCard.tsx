@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { RESULTS_TEXT } from '../constants/compression.ts'
+import { useAudioPreview } from '../hooks/useAudioPreview.ts'
 import type { SoundItem } from '../types.ts'
 import { formatDuration } from '../utils/compressSound.ts'
 import { ResultRow } from './ResultRow.tsx'
@@ -9,27 +10,10 @@ interface SoundResultCardProps {
 }
 
 export function SoundResultCard({ item, onRemove }: SoundResultCardProps) {
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const { audioRef, isPlaying, setIsPlaying, togglePlay } = useAudioPreview(
+    item.compressedUrl,
+  )
   const isReady = item.status === 'done'
-
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-    audio.pause()
-    audio.currentTime = 0
-    setIsPlaying(false)
-  }, [item.compressedUrl])
-
-  function handleTogglePlay() {
-    const audio = audioRef.current
-    if (!audio || !item.compressedUrl) return
-    if (audio.paused) {
-      audio.play().catch(() => {})
-    } else {
-      audio.pause()
-    }
-  }
 
   const meta =
     item.duration > 0
@@ -50,7 +34,7 @@ export function SoundResultCard({ item, onRemove }: SoundResultCardProps) {
       )}
       <button
         type="button"
-        onClick={handleTogglePlay}
+        onClick={togglePlay}
         disabled={!isReady}
         aria-label={
           isPlaying ? `Pause ${item.outputName}` : `Play ${item.outputName}`
@@ -90,8 +74,8 @@ export function SoundResultCard({ item, onRemove }: SoundResultCardProps) {
       meta={meta}
       media={media}
       onRemove={onRemove}
-      processingLabel="Encoding MP3…"
-      fallbackError="Could not compress this audio file."
+      processingLabel={RESULTS_TEXT.soundProcessingLabel}
+      fallbackError={RESULTS_TEXT.soundErrorLabel}
     />
   )
 }

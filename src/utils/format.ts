@@ -39,6 +39,35 @@ export function getCompressionStats(
   }
 }
 
+export interface CompressionBatchSummary<T> {
+  readyItems: T[]
+  totalOriginal: number
+  totalCompressed: number
+  overallStats: CompressionStats | null
+}
+
+export function summarizeCompressionItems<
+  T extends { status: string; originalSize: number; compressedSize: number },
+>(items: T[]): CompressionBatchSummary<T> {
+  const readyItems = items.filter((item) => item.status === 'done')
+  const totalOriginal = readyItems.reduce((sum, item) => sum + item.originalSize, 0)
+  const totalCompressed = readyItems.reduce(
+    (sum, item) => sum + item.compressedSize,
+    0,
+  )
+  const overallStats =
+    readyItems.length > 0
+      ? getCompressionStats(totalOriginal, totalCompressed)
+      : null
+
+  return {
+    readyItems,
+    totalOriginal,
+    totalCompressed,
+    overallStats,
+  }
+}
+
 export function replaceExtension(filename: string, nextExt: string): string {
   const dotIndex = filename.lastIndexOf('.')
   const base = dotIndex > 0 ? filename.slice(0, dotIndex) : filename

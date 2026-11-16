@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
-import { type ChangeEvent, type DragEvent, type KeyboardEvent, useRef, useState } from 'react'
 import { IMAGE_COMPRESS_CONFIG } from '../constants/compression.ts'
+import { useFileDrop } from '../hooks/useFileDrop.ts'
 
 interface DropZoneProps {
   onFilesSelected: (files: File[]) => void
@@ -23,67 +23,17 @@ export function DropZone({
   formatHint = IMAGE_COMPRESS_CONFIG.dropZone.formatHint,
   buttonLabel = IMAGE_COMPRESS_CONFIG.dropZone.buttonLabel,
 }: DropZoneProps) {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const dragDepthRef = useRef(0)
-  const [isDragging, setIsDragging] = useState(false)
-
-  function handleDragEnter(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    dragDepthRef.current += 1
-    setIsDragging(true)
-  }
-
-  function handleDragOver(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.dataTransfer) {
-      e.dataTransfer.dropEffect = 'copy'
-    }
-  }
-
-  function handleDragLeave(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
-    if (dragDepthRef.current === 0) {
-      setIsDragging(false)
-    }
-  }
-
-  function handleDrop(e: DragEvent<HTMLDivElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    dragDepthRef.current = 0
-    setIsDragging(false)
-    if (disabled) return
-
-    const files = Array.from(e.dataTransfer?.files ?? [])
-    if (files.length > 0) {
-      onFilesSelected(files)
-    }
-  }
-
-  function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? [])
-    if (files.length > 0) {
-      onFilesSelected(files)
-    }
-    e.target.value = ''
-  }
-
-  function openPicker() {
-    if (!disabled) {
-      inputRef.current?.click()
-    }
-  }
-
-  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      openPicker()
-    }
-  }
+  const {
+    inputRef,
+    isDragging,
+    handleDragEnter,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleInputChange,
+    openPicker,
+    handleKeyDown,
+  } = useFileDrop({ disabled, onFilesSelected })
 
   return (
     <motion.div

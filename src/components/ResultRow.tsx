@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
+import { RESULTS_TEXT } from '../constants/compression.ts'
 import type { BaseMediaItem } from '../types.ts'
 import { triggerUrlDownload } from '../utils/download.ts'
 import { formatBytes, getCompressionStats } from '../utils/format.ts'
@@ -18,8 +19,8 @@ export function ResultRow({
   meta,
   media,
   onRemove,
-  processingLabel = 'Compressing…',
-  fallbackError = 'Could not compress this file.',
+  processingLabel = RESULTS_TEXT.defaultProcessingLabel,
+  fallbackError = RESULTS_TEXT.defaultErrorLabel,
 }: ResultRowProps) {
   const isReady = item.status === 'done'
   const isError = item.status === 'error'
@@ -95,7 +96,7 @@ export function ResultRow({
           disabled={!isReady}
           className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-4 text-xs font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm"
         >
-          Download
+          {RESULTS_TEXT.downloadLabel}
         </button>
         <button
           type="button"

@@ -1,3 +1,4 @@
+import { RESULTS_TEXT } from '../constants/compression.ts'
 import type { ImageItem } from '../types.ts'
 import { ResultRow } from './ResultRow.tsx'
 
@@ -34,8 +35,8 @@ export function ImageResultCard({ item, onRemove }: ImageResultCardProps) {
       meta={meta}
       media={media}
       onRemove={onRemove}
-      processingLabel="Compressing…"
-      fallbackError="Could not compress this image."
+      processingLabel={RESULTS_TEXT.imageProcessingLabel}
+      fallbackError={RESULTS_TEXT.imageErrorLabel}
     />
   )
 }

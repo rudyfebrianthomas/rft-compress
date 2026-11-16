@@ -1,8 +1,9 @@
 import { AnimatePresence } from 'motion/react'
 import { type ReactNode, useState } from 'react'
+import { RESULTS_TEXT } from '../constants/compression.ts'
 import type { BaseMediaItem } from '../types.ts'
 import { downloadItemsAsZip } from '../utils/download.ts'
-import { formatBytes, getCompressionStats } from '../utils/format.ts'
+import { formatBytes, summarizeCompressionItems } from '../utils/format.ts'
 
 interface CompressionResultsSectionProps<T extends BaseMediaItem> {
   items: T[]
@@ -20,16 +21,8 @@ export function CompressionResultsSection<T extends BaseMediaItem>({
   onClearAll,
 }: CompressionResultsSectionProps<T>) {
   const [isZipping, setIsZipping] = useState(false)
-  const readyItems = items.filter((item) => item.status === 'done')
-  const totalOriginal = readyItems.reduce((sum, item) => sum + item.originalSize, 0)
-  const totalCompressed = readyItems.reduce(
-    (sum, item) => sum + item.compressedSize,
-    0,
-  )
-  const overallStats =
-    readyItems.length > 0
-      ? getCompressionStats(totalOriginal, totalCompressed)
-      : null
+  const { readyItems, totalOriginal, totalCompressed, overallStats } =
+    summarizeCompressionItems(items)
 
   async function handleDownloadAll() {
     if (isZipping || readyItems.length === 0) return
@@ -46,7 +39,7 @@ export function CompressionResultsSection<T extends BaseMediaItem>({
       <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <h2 className="text-lg font-medium tracking-tight text-ink">
-            Results ({items.length})
+            {RESULTS_TEXT.headingPrefix} ({items.length})
           </h2>
           {overallStats ? (
             <p className="font-mono text-xs text-muted tabular-nums sm:text-sm">
@@ -65,7 +58,7 @@ export function CompressionResultsSection<T extends BaseMediaItem>({
             </p>
           ) : (
             <p className="text-xs text-muted sm:text-sm">
-              No compressed files available.
+              {RESULTS_TEXT.emptyMessage}
             </p>
           )}
         </div>
@@ -78,15 +71,15 @@ export function CompressionResultsSection<T extends BaseMediaItem>({
             className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
           >
             {isZipping
-              ? 'Zipping…'
-              : `Download all (${readyItems.length}) · .zip`}
+              ? RESULTS_TEXT.zippingLabel
+              : `${RESULTS_TEXT.downloadAllLabel} (${readyItems.length}) · ${RESULTS_TEXT.zipSuffix}`}
           </button>
           <button
             type="button"
             onClick={onClearAll}
             className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
           >
-            Clear
+            {RESULTS_TEXT.clearLabel}
           </button>
         </div>
       </div>

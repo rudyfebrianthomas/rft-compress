@@ -60,7 +60,9 @@ npm run preview  # Preview production build locally
     │   ├── navigation.ts
     │   └── pages.ts
     ├── hooks/
+    │   ├── useAudioPreview.ts
     │   ├── useBatchRunner.ts
+    │   ├── useFileDrop.ts
     │   ├── useHashRoute.ts
     │   ├── useMediaQueue.ts
     │   └── useTheme.ts
