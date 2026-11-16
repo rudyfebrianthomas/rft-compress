@@ -63,6 +63,7 @@ npm run preview    # Preview the production build locally
 ## Project Structure
 
 ```text
+├── LICENSE
 ├── index.html
 ├── package.json
 ├── tsconfig.json
@@ -116,3 +117,7 @@ npm run preview    # Preview the production build locally
         ├── format.test.ts
         └── mediaItems.ts
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
