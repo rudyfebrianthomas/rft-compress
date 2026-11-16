@@ -35,6 +35,14 @@ export const SOUND_COMPRESS_CONFIG = {
   resultsAriaLabel: 'Compressed audio files',
   loadingLabel: 'Compressing sound',
   allowedFormatsLabel: 'WAV, MP3, OGG, FLAC, M4A, AAC, WebM',
+  channelLabels: {
+    mono: 'Mono',
+    stereo: 'Stereo',
+  },
+  previewLabels: {
+    play: 'Play preview',
+    pause: 'Pause preview',
+  },
   dropZone: {
     accept: 'audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac,.webm,.opus,.aiff,.wma',
     ariaLabel:

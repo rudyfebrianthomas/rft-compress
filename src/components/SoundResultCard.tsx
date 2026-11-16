@@ -1,4 +1,4 @@
-import { RESULTS_TEXT } from '../constants/compression.ts'
+import { RESULTS_TEXT, SOUND_COMPRESS_CONFIG } from '../constants/compression.ts'
 import { useAudioPreview } from '../hooks/useAudioPreview.ts'
 import type { SoundItem } from '../types.ts'
 import { formatDuration } from '../utils/compressSound.ts'
@@ -22,7 +22,7 @@ export function SoundResultCard({
 
   const meta =
     item.duration > 0
-      ? `${formatDuration(item.duration)} · ${Math.round(item.sampleRate / 100) / 10} kHz · ${item.channels === 1 ? 'Mono' : 'Stereo'}`
+      ? `${formatDuration(item.duration)} · ${Math.round(item.sampleRate / 100) / 10} kHz · ${item.channels === 1 ? SOUND_COMPRESS_CONFIG.channelLabels.mono : SOUND_COMPRESS_CONFIG.channelLabels.stereo}`
       : ''
 
   const media = (
@@ -44,7 +44,11 @@ export function SoundResultCard({
         aria-label={
           isPlaying ? `Pause ${item.outputName}` : `Play ${item.outputName}`
         }
-        title={isPlaying ? 'Pause preview' : 'Play preview'}
+        title={
+          isPlaying
+            ? SOUND_COMPRESS_CONFIG.previewLabels.pause
+            : SOUND_COMPRESS_CONFIG.previewLabels.play
+        }
         className="grid size-14 shrink-0 cursor-pointer place-items-center rounded-xl border border-border bg-bg text-ink transition-colors hover:border-border-strong hover:bg-surface-elevated active:scale-[0.96] disabled:cursor-not-allowed disabled:opacity-40 sm:size-16"
       >
         {isPlaying ? (
