@@ -219,9 +219,9 @@ function App() {
             )}
           </main>
 
-          <footer className="mx-auto w-full max-w-4xl px-6 pb-10 pt-2 text-center sm:px-8">
-            <div className="border-t border-border pt-6">
-              <p className="font-mono text-xs text-muted">
+          <footer className="mx-auto w-full max-w-4xl px-6 pb-4 text-center sm:px-8">
+            <div className="border-t border-border pt-3">
+              <p className="font-mono text-[11px] leading-none text-muted">
                 © {CURRENT_YEAR} RFT Compress Images · Local WebP &amp; GIF
               </p>
             </div>
