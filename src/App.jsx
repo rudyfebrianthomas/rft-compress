@@ -2,14 +2,19 @@ import { ReactLenis } from 'lenis/react'
 import { MotionConfig, cancelFrame, frame } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Header } from './components/Header.jsx'
-import { AboutPage } from './pages/AboutPage.jsx'
+import { CompressImagePage } from './pages/CompressImagePage.jsx'
+import { CompressSoundPage } from './pages/CompressSoundPage.jsx'
 import { HomePage } from './pages/HomePage.jsx'
 import { compressImageFile, isGifFile } from './utils/compressImage.js'
+import { compressSoundFile, isAudioFile } from './utils/compressSound.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
 function getPageFromHash() {
-  return window.location.hash === '#about' ? 'about' : 'home'
+  const hash = window.location.hash.toLowerCase()
+  if (hash === '#image' || hash === '#images') return 'image'
+  if (hash === '#sound' || hash === '#audio') return 'sound'
+  return 'home'
 }
 
 function getInitialTheme() {
@@ -36,11 +41,25 @@ function revokeItemUrls(item) {
 
 function App() {
   const lenisRef = useRef(null)
-  const itemsRef = useRef([])
+  const imageItemsRef = useRef([])
+  const soundItemsRef = useRef([])
+
   const [currentPage, setCurrentPage] = useState(getPageFromHash)
   const [theme, setTheme] = useState(getInitialTheme)
+
   const [quality, setQuality] = useState(0.8)
-  const [items, setItems] = useState([])
+  const [imageItems, setImageItems] = useState([])
+
+  const [bitrate, setBitrate] = useState(128)
+  const [soundItems, setSoundItems] = useState([])
+
+  useEffect(() => {
+    imageItemsRef.current = imageItems
+  }, [imageItems])
+
+  useEffect(() => {
+    soundItemsRef.current = soundItems
+  }, [soundItems])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -51,10 +70,6 @@ function App() {
       meta.setAttribute('content', theme === 'dark' ? '#18181b' : '#ffffff')
     }
   }, [theme])
-
-  useEffect(() => {
-    itemsRef.current = items
-  }, [items])
 
   useEffect(() => {
     function update(data) {
@@ -75,25 +90,26 @@ function App() {
 
   useEffect(() => {
     return () => {
-      itemsRef.current.forEach(revokeItemUrls)
+      imageItemsRef.current.forEach(revokeItemUrls)
+      soundItemsRef.current.forEach(revokeItemUrls)
     }
   }, [])
 
   function handleNavigate(page) {
     setCurrentPage(page)
-    const nextHash = page === 'about' ? '#about' : '#home'
+    const nextHash = `#${page}`
     if (window.location.hash !== nextHash) {
       window.history.pushState(null, '', nextHash)
     }
     lenisRef.current?.lenis?.scrollTo(0, { immediate: false })
   }
 
-  async function processEntry(id, file, targetQuality) {
+  async function processImageEntry(id, file, targetQuality) {
     try {
       const result = await compressImageFile(file, targetQuality)
       const compressedUrl = URL.createObjectURL(result.blob)
 
-      setItems((prev) =>
+      setImageItems((prev) =>
         prev.map((item) => {
           if (item.id !== id) return item
           if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl)
@@ -114,7 +130,7 @@ function App() {
         }),
       )
     } catch (err) {
-      setItems((prev) =>
+      setImageItems((prev) =>
         prev.map((item) =>
           item.id === id
             ? {
@@ -128,7 +144,7 @@ function App() {
     }
   }
 
-  function handleFilesSelected(fileList) {
+  function handleImageFilesSelected(fileList) {
     const validFiles = fileList.filter(
       (file) => file.type.startsWith('image/') || isGifFile(file),
     )
@@ -155,33 +171,122 @@ function App() {
       }
     })
 
-    setItems((prev) => [...newEntries, ...prev])
-
+    setImageItems((prev) => [...newEntries, ...prev])
     newEntries.forEach((entry) => {
-      processEntry(entry.id, entry.file, quality)
+      processImageEntry(entry.id, entry.file, quality)
     })
   }
 
-  function handleRecompressAll() {
-    const snapshot = items
-    setItems((prev) =>
+  function handleRecompressImages() {
+    const snapshot = imageItems
+    setImageItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
     snapshot.forEach((item) => {
-      processEntry(item.id, item.file, quality)
+      processImageEntry(item.id, item.file, quality)
     })
   }
 
-  function handleRemoveItem(id) {
-    setItems((prev) => {
+  function handleRemoveImage(id) {
+    setImageItems((prev) => {
       const target = prev.find((item) => item.id === id)
       if (target) revokeItemUrls(target)
       return prev.filter((item) => item.id !== id)
     })
   }
 
-  function handleClearAll() {
-    setItems((prev) => {
+  function handleClearImages() {
+    setImageItems((prev) => {
+      prev.forEach(revokeItemUrls)
+      return []
+    })
+  }
+
+  async function processSoundEntry(id, file, targetBitrate) {
+    try {
+      const result = await compressSoundFile(file, targetBitrate)
+      const compressedUrl = URL.createObjectURL(result.blob)
+
+      setSoundItems((prev) =>
+        prev.map((item) => {
+          if (item.id !== id) return item
+          if (item.compressedUrl) URL.revokeObjectURL(item.compressedUrl)
+          return {
+            ...item,
+            status: 'done',
+            compressedSize: result.blob.size,
+            compressedUrl,
+            outputName: result.outputName,
+            format: result.format,
+            duration: result.duration,
+            sampleRate: result.sampleRate,
+            channels: result.channels,
+            bitrateUsed: targetBitrate,
+            error: null,
+          }
+        }),
+      )
+    } catch (err) {
+      setSoundItems((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                status: 'error',
+                error: err instanceof Error ? err.message : 'Compression failed.',
+              }
+            : item,
+        ),
+      )
+    }
+  }
+
+  function handleSoundFilesSelected(fileList) {
+    const validFiles = fileList.filter(isAudioFile)
+    if (validFiles.length === 0) return
+
+    const newEntries = validFiles.map((file) => ({
+      id: createItemId(),
+      file,
+      outputName: file.name,
+      format: 'MP3',
+      originalSize: file.size,
+      compressedSize: 0,
+      compressedUrl: null,
+      duration: 0,
+      sampleRate: 0,
+      channels: 2,
+      bitrateUsed: bitrate,
+      status: 'processing',
+      error: null,
+    }))
+
+    setSoundItems((prev) => [...newEntries, ...prev])
+    newEntries.forEach((entry) => {
+      processSoundEntry(entry.id, entry.file, bitrate)
+    })
+  }
+
+  function handleRecompressSounds() {
+    const snapshot = soundItems
+    setSoundItems((prev) =>
+      prev.map((item) => ({ ...item, status: 'processing', error: null })),
+    )
+    snapshot.forEach((item) => {
+      processSoundEntry(item.id, item.file, bitrate)
+    })
+  }
+
+  function handleRemoveSound(id) {
+    setSoundItems((prev) => {
+      const target = prev.find((item) => item.id === id)
+      if (target) revokeItemUrls(target)
+      return prev.filter((item) => item.id !== id)
+    })
+  }
+
+  function handleClearSounds() {
+    setSoundItems((prev) => {
       prev.forEach(revokeItemUrls)
       return []
     })
@@ -204,25 +309,37 @@ function App() {
             id="main-content"
             className="mx-auto w-full max-w-4xl flex-1 px-6 py-12 sm:px-8 sm:py-16"
           >
-            {currentPage === 'about' ? (
-              <AboutPage onGoHome={() => handleNavigate('home')} />
-            ) : (
-              <HomePage
-                items={items}
+            {currentPage === 'image' && (
+              <CompressImagePage
+                items={imageItems}
                 quality={quality}
                 onQualityChange={setQuality}
-                onFilesSelected={handleFilesSelected}
-                onRecompressAll={handleRecompressAll}
-                onRemoveItem={handleRemoveItem}
-                onClearAll={handleClearAll}
+                onFilesSelected={handleImageFilesSelected}
+                onRecompressAll={handleRecompressImages}
+                onRemoveItem={handleRemoveImage}
+                onClearAll={handleClearImages}
               />
             )}
+
+            {currentPage === 'sound' && (
+              <CompressSoundPage
+                items={soundItems}
+                bitrate={bitrate}
+                onBitrateChange={setBitrate}
+                onFilesSelected={handleSoundFilesSelected}
+                onRecompressAll={handleRecompressSounds}
+                onRemoveItem={handleRemoveSound}
+                onClearAll={handleClearSounds}
+              />
+            )}
+
+            {currentPage === 'home' && <HomePage onNavigate={handleNavigate} />}
           </main>
 
           <footer className="mx-auto w-full max-w-4xl px-6 pb-4 text-center sm:px-8">
             <div className="border-t border-border pt-3">
               <p className="font-mono text-[11px] leading-none text-muted">
-                © {CURRENT_YEAR} RFT Compress Images · Local WebP &amp; GIF
+                © {CURRENT_YEAR} RFT Compress · Local Image &amp; Sound
               </p>
             </div>
           </footer>

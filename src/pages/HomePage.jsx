@@ -1,159 +1,175 @@
-import { AnimatePresence, motion } from 'motion/react'
-import { DropZone } from '../components/DropZone.jsx'
-import { ImageResultCard } from '../components/ImageResultCard.jsx'
-import { formatBytes, getCompressionStats } from '../utils/compressImage.js'
+import { motion } from 'motion/react'
 
-export function HomePage({
-  items,
-  quality,
-  onQualityChange,
-  onFilesSelected,
-  onRecompressAll,
-  onRemoveItem,
-  onClearAll,
-}) {
-  const readyItems = items.filter((item) => item.status === 'done')
-  const totalOriginal = readyItems.reduce((sum, item) => sum + item.originalSize, 0)
-  const totalCompressed = readyItems.reduce(
-    (sum, item) => sum + item.compressedSize,
-    0,
-  )
-  const overallStats =
-    readyItems.length > 0
-      ? getCompressionStats(totalOriginal, totalCompressed)
-      : null
+const TOOLS = [
+  {
+    id: 'image',
+    title: 'Compress Image',
+    formats: 'PNG · JPG · WEBP · BMP · AVIF → WEBP / GIF → GIF',
+    description:
+      'Convert photos and graphics into compact WebP via WebAssembly libwebp, and shrink animated GIFs with Gifsicle.',
+    action: 'Open Image Compressor',
+  },
+  {
+    id: 'sound',
+    title: 'Compress Sound',
+    formats: 'WAV · MP3 · OGG · FLAC · M4A → MP3',
+    description:
+      'Decode audio in your browser and encode smaller MP3 files at your chosen bitrate using LAME.',
+    action: 'Open Sound Compressor',
+  },
+]
 
-  const hasStaleQuality = items.some(
-    (item) => item.status === 'done' && item.qualityUsed !== quality,
-  )
+const STEPS = [
+  {
+    step: '01',
+    title: 'Choose Image or Sound',
+    detail:
+      'Pick Compress Image or Compress Sound from the navigation bar, then set your target quality or MP3 bitrate.',
+  },
+  {
+    step: '02',
+    title: 'Drop files in the box',
+    detail:
+      'Drag and drop one or multiple files into the upload box, or click to browse. Everything runs locally in browser memory.',
+  },
+  {
+    step: '03',
+    title: 'Review savings and download',
+    detail:
+      'See every file preview, original size, compressed size, and compression percentage, then download one or all files.',
+  },
+]
 
-  function handleDownloadAll() {
-    readyItems.forEach((item, idx) => {
-      setTimeout(() => {
-        const link = document.createElement('a')
-        link.href = item.compressedUrl
-        link.download = item.outputName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      }, idx * 140)
-    })
-  }
+const FORMAT_ROWS = [
+  {
+    input: 'PNG, JPG, JPEG, WebP, BMP, AVIF',
+    output: 'WebP (.webp)',
+    method: 'WebAssembly libwebp encoding with transparency',
+  },
+  {
+    input: 'GIF (.gif)',
+    output: 'GIF (.gif)',
+    method: 'WebAssembly Gifsicle lossy LZW optimization',
+  },
+  {
+    input: 'WAV, MP3, OGG, FLAC, M4A, AAC, WebM',
+    output: 'MP3 (.mp3)',
+    method: 'Web Audio API decoding + LAME MP3 encoding',
+  },
+]
 
+export function HomePage({ onNavigate }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.22, ease: 'easeOut' }}
-      className="space-y-10"
+      className="space-y-14"
     >
-      <section className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-2.5">
-          <h1 className="font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
-            Compress images to WebP and GIF
-          </h1>
-          <p className="max-w-xl text-base leading-relaxed text-muted">
-            Fast, private compression inside your browser. Nothing is uploaded.
-          </p>
-        </div>
+      <section className="space-y-4">
+        <h1 className="max-w-2xl font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
+          Compress images and sound in your browser
+        </h1>
+        <p className="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+          RFT Compress is a local media compression app. Shrink photos to WebP,
+          optimize animated GIFs, and compress audio files to MP3 directly on
+          your device with zero server uploads.
+        </p>
+      </section>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-3">
-          <label
-            htmlFor="quality-range"
-            className="text-sm font-medium text-muted"
+      <section aria-label="Compression tools" className="grid gap-4 md:grid-cols-2">
+        {TOOLS.map((tool) => (
+          <article
+            key={tool.id}
+            className="flex flex-col justify-between gap-6 rounded-2xl border border-border bg-surface/50 p-6 transition-colors hover:border-border-strong"
           >
-            Quality
-          </label>
-          <input
-            id="quality-range"
-            type="range"
-            min="30"
-            max="95"
-            step="5"
-            value={Math.round(quality * 100)}
-            onChange={(e) => onQualityChange(Number(e.target.value) / 100)}
-            className="h-1.5 w-32 cursor-pointer accent-accent sm:w-36"
-          />
-          <span className="min-w-[3.25rem] text-right font-mono text-sm font-medium text-ink tabular-nums">
-            {Math.round(quality * 100)}%
-          </span>
-          {hasStaleQuality && (
-            <button
-              type="button"
-              onClick={onRecompressAll}
-              className="inline-flex min-h-[36px] cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
+            <div className="space-y-2.5">
+              <h2 className="text-xl font-medium tracking-tight text-ink">
+                {tool.title}
+              </h2>
+              <p className="font-mono text-xs text-muted">{tool.formats}</p>
+              <p className="text-sm leading-relaxed text-muted sm:text-base">
+                {tool.description}
+              </p>
+            </div>
+
+            <div>
+              <button
+                type="button"
+                onClick={() => onNavigate(tool.id)}
+                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
+              >
+                {tool.action}
+              </button>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section aria-labelledby="how-to-use-heading" className="space-y-6">
+        <h2
+          id="how-to-use-heading"
+          className="text-xl font-medium tracking-tight text-ink sm:text-2xl"
+        >
+          How to use
+        </h2>
+        <div className="grid gap-8 md:grid-cols-3">
+          {STEPS.map((item) => (
+            <article
+              key={item.step}
+              className="space-y-2.5 border-t border-border pt-5"
             >
-              Re-apply
-            </button>
-          )}
+              <span className="block font-mono text-xs font-medium text-muted">
+                {item.step}
+              </span>
+              <h3 className="text-base font-medium text-ink">{item.title}</h3>
+              <p className="text-sm leading-relaxed text-muted sm:text-base">
+                {item.detail}
+              </p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section aria-label="Image upload dropzone">
-        <DropZone onFilesSelected={onFilesSelected} />
+      <section aria-labelledby="formats-heading" className="space-y-5">
+        <h2
+          id="formats-heading"
+          className="text-xl font-medium tracking-tight text-ink sm:text-2xl"
+        >
+          Supported formats
+        </h2>
+        <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface/50">
+          {FORMAT_ROWS.map((row) => (
+            <div
+              key={row.output}
+              className="grid gap-3 p-5 sm:grid-cols-3 sm:items-center sm:gap-6"
+            >
+              <div>
+                <span className="block font-mono text-[11px] uppercase tracking-wider text-muted">
+                  Input
+                </span>
+                <span className="text-sm font-medium text-ink sm:text-base">
+                  {row.input}
+                </span>
+              </div>
+              <div>
+                <span className="block font-mono text-[11px] uppercase tracking-wider text-muted">
+                  Output
+                </span>
+                <span className="font-mono text-sm font-medium text-ink sm:text-base">
+                  {row.output}
+                </span>
+              </div>
+              <div>
+                <span className="block font-mono text-[11px] uppercase tracking-wider text-muted">
+                  Method
+                </span>
+                <span className="text-sm text-muted">{row.method}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
-
-      {items.length > 0 && (
-        <section aria-label="Compressed images" className="space-y-4">
-          <div className="flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1">
-              <h2 className="text-lg font-medium tracking-tight text-ink">
-                Results ({items.length})
-              </h2>
-              {overallStats ? (
-                <p className="font-mono text-xs text-muted tabular-nums sm:text-sm">
-                  {formatBytes(totalOriginal)} →{' '}
-                  <strong className="font-medium text-ink">
-                    {formatBytes(totalCompressed)}
-                  </strong>{' '}
-                  ·{' '}
-                  <span
-                    className={
-                      overallStats.savedBytes > 0 ? 'text-ink' : 'text-muted'
-                    }
-                  >
-                    {overallStats.description}
-                  </span>
-                </p>
-              ) : (
-                <p className="text-xs text-muted sm:text-sm">
-                  Processing uploaded files…
-                </p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleDownloadAll}
-                disabled={readyItems.length === 0}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
-              >
-                Download all ({readyItems.length})
-              </button>
-              <button
-                type="button"
-                onClick={onClearAll}
-                className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full px-4 text-sm font-medium text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.98]"
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-2xl border border-border bg-surface/50 divide-y divide-border">
-            <AnimatePresence initial={false}>
-              {items.map((item) => (
-                <ImageResultCard
-                  key={item.id}
-                  item={item}
-                  onRemove={onRemoveItem}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
-        </section>
-      )}
     </motion.div>
   )
 }

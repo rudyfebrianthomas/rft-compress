@@ -1,7 +1,16 @@
 import { motion } from 'motion/react'
 import { useRef, useState } from 'react'
 
-export function DropZone({ onFilesSelected, disabled = false }) {
+export function DropZone({
+  onFilesSelected,
+  disabled = false,
+  accept = 'image/*,.gif,.png,.jpg,.jpeg,.webp,.avif,.bmp',
+  ariaLabel = 'Upload images by dragging and dropping or clicking to browse',
+  idleTitle = 'Drop images here or browse',
+  dragTitle = 'Drop images to compress',
+  formatHint = 'PNG · JPG · WEBP · BMP · AVIF → WEBP / GIF → GIF',
+  buttonLabel = 'Select images',
+}) {
   const inputRef = useRef(null)
   const dragDepthRef = useRef(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -68,7 +77,7 @@ export function DropZone({ onFilesSelected, disabled = false }) {
     <motion.div
       role="button"
       tabIndex={0}
-      aria-label="Upload images by dragging and dropping or clicking to browse"
+      aria-label={ariaLabel}
       onClick={openPicker}
       onKeyDown={handleKeyDown}
       onDragEnter={handleDragEnter}
@@ -87,13 +96,13 @@ export function DropZone({ onFilesSelected, disabled = false }) {
         ref={inputRef}
         type="file"
         multiple
-        accept="image/*,.gif,.png,.jpg,.jpeg,.webp,.avif,.bmp"
+        accept={accept}
         onChange={handleInputChange}
         className="sr-only"
       />
 
       <div
-        className={`mb-5 grid h-12 w-12 place-items-center rounded-full border transition-colors ${
+        className={`mb-5 grid size-12 place-items-center rounded-full border transition-colors ${
           isDragging
             ? 'border-accent bg-accent text-accent-ink'
             : 'border-border bg-bg text-ink group-hover:border-border-strong'
@@ -123,14 +132,14 @@ export function DropZone({ onFilesSelected, disabled = false }) {
       </div>
 
       <p className="text-xl font-medium tracking-tight text-ink sm:text-2xl">
-        {isDragging ? 'Drop images to compress' : 'Drop images here or browse'}
+        {isDragging ? dragTitle : idleTitle}
       </p>
       <p className="mt-2 font-mono text-xs tracking-wide text-muted">
-        PNG · JPG · WEBP · BMP · AVIF → WEBP &nbsp;/&nbsp; GIF → GIF
+        {formatHint}
       </p>
 
       <span className="mt-7 inline-flex min-h-[44px] items-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-transform group-hover:opacity-90 group-active:scale-[0.98]">
-        Select images
+        {buttonLabel}
       </span>
     </motion.div>
   )

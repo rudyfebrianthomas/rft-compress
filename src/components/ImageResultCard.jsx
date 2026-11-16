@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { formatBytes, getCompressionStats } from '../utils/compressImage.js'
+import { formatBytes, getCompressionStats } from '../utils/format.js'
 
 export function ImageResultCard({ item, onRemove }) {
   const isReady = item.status === 'done'
@@ -28,15 +28,15 @@ export function ImageResultCard({ item, onRemove }) {
       className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-4"
     >
       <div className="flex min-w-0 items-center gap-4">
-        <div className="checker-bg relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border sm:h-20 sm:w-20">
+        <div className="checker-bg relative size-16 shrink-0 overflow-hidden rounded-xl border border-border sm:size-20">
           {item.previewUrl ? (
             <img
               src={item.previewUrl}
               alt={item.outputName}
-              className="h-full w-full object-cover"
+              className="size-full object-cover"
             />
           ) : (
-            <div className="grid h-full w-full place-items-center font-mono text-xs text-muted">
+            <div className="grid size-full place-items-center font-mono text-xs text-muted">
               ...
             </div>
           )}
@@ -106,7 +106,7 @@ export function ImageResultCard({ item, onRemove }) {
           onClick={() => onRemove(item.id)}
           aria-label={`Remove ${item.outputName}`}
           title={`Remove ${item.outputName}`}
-          className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-bg hover:text-ink active:scale-[0.96]"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-bg hover:text-ink active:scale-[0.96]"
         >
           <svg
             width="16"

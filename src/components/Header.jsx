@@ -2,7 +2,8 @@ import { motion } from 'motion/react'
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
-  { id: 'about', label: 'About' },
+  { id: 'image', label: 'Image' },
+  { id: 'sound', label: 'Sound' },
 ]
 
 export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
@@ -13,7 +14,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-4 px-6 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-3 px-6 sm:px-8">
         <a
           href="#home"
           onClick={(e) => {
@@ -47,11 +48,11 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
               strokeLinejoin="round"
             />
           </svg>
-          <span className="truncate">RFT Compress Images</span>
+          <span className="truncate">RFT Compress</span>
         </a>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <nav aria-label="Primary" className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <nav aria-label="Primary" className="flex items-center gap-0.5 sm:gap-1">
             {NAV_ITEMS.map((item) => {
               const isActive = currentPage === item.id
               return (
@@ -63,7 +64,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                     e.preventDefault()
                     onNavigate(item.id)
                   }}
-                  className={`relative inline-flex min-h-[44px] items-center rounded-full px-4 text-sm font-medium transition-colors ${
+                  className={`relative inline-flex min-h-[44px] items-center rounded-full px-3 text-sm font-medium transition-colors sm:px-4 ${
                     isActive
                       ? 'text-accent-ink'
                       : 'text-muted hover:text-ink'
@@ -73,7 +74,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
                     <motion.span
                       layoutId="nav-active-pill"
                       transition={{ type: 'spring', stiffness: 460, damping: 36 }}
-                      className="absolute inset-y-1.5 inset-x-0 rounded-full bg-accent"
+                      className="absolute inset-x-0 inset-y-1.5 rounded-full bg-accent"
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
@@ -89,7 +90,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
             onClick={onToggleTheme}
             aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            className="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.96]"
+            className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.96]"
           >
             {isDark ? (
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
