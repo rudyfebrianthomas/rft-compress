@@ -84,9 +84,6 @@ function AppShell() {
             <Route path={PAGE_ROUTES.home}>
               <HomePage />
             </Route>
-            <Route path="/home">
-              <Redirect to={PAGE_ROUTES.home} />
-            </Route>
             <Route path={PAGE_ROUTES.image}>
               <CompressImagePage
                 items={imageQueue.items}
@@ -101,9 +98,6 @@ function AppShell() {
                 onClearAll={imageQueue.handleClearAll}
               />
             </Route>
-            <Route path="/images">
-              <Redirect to={PAGE_ROUTES.image} />
-            </Route>
             <Route path={PAGE_ROUTES.sound}>
               <CompressSoundPage
                 items={soundQueue.items}
@@ -117,9 +111,6 @@ function AppShell() {
                 onRemoveItem={soundQueue.handleRemoveItem}
                 onClearAll={soundQueue.handleClearAll}
               />
-            </Route>
-            <Route path="/audio">
-              <Redirect to={PAGE_ROUTES.sound} />
             </Route>
             <Route path={PAGE_ROUTES.about}>
               <AboutPage />
