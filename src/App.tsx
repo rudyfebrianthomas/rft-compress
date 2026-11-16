@@ -1,13 +1,14 @@
 import { MotionConfig } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Redirect, Route, Router, Switch, useLocation } from 'wouter'
+import { Footer } from './components/Footer.tsx'
 import { Header } from './components/Header.tsx'
 import { LoadingOverlay } from './components/LoadingOverlay.tsx'
 import {
   IMAGE_COMPRESS_CONFIG,
   SOUND_COMPRESS_CONFIG,
 } from './constants/compression.ts'
-import { PAGE_ROUTES, SITE_TEXT } from './constants/navigation.ts'
+import { PAGE_ROUTES } from './constants/navigation.ts'
 import { useBatchRunner } from './hooks/useBatchRunner.ts'
 import { useMediaQueue } from './hooks/useMediaQueue.ts'
 import { useTheme } from './hooks/useTheme.ts'
@@ -24,7 +25,6 @@ import {
   createPendingSoundItem,
 } from './utils/mediaItems.ts'
 
-const CURRENT_YEAR = new Date().getFullYear()
 const ROUTER_BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
 
 function AppShell() {
@@ -121,13 +121,7 @@ function AppShell() {
           </Switch>
         </main>
 
-        <footer className="mx-auto w-full max-w-4xl px-6 pb-4 text-center sm:px-8">
-          <div className="border-t border-border pt-3">
-            <p className="font-mono text-[11px] leading-none text-muted">
-              © {CURRENT_YEAR} {SITE_TEXT.brand} · {SITE_TEXT.footerTagline}
-            </p>
-          </div>
-        </footer>
+        <Footer />
       </div>
 
       <LoadingOverlay

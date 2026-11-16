@@ -95,6 +95,7 @@ npm run preview    # Preview the production build locally
     ├── components/
     │   ├── CompressionResultsSection.tsx
     │   ├── DropZone.tsx
+    │   ├── Footer.tsx
     │   ├── Header.tsx
     │   ├── ImageResultCard.tsx
     │   ├── LoadingOverlay.tsx
