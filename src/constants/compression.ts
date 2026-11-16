@@ -1,6 +1,7 @@
 export const IMAGE_COMPRESS_CONFIG = {
   title: 'Compress images to WebP and GIF',
   subtitle: 'Fast, private compression inside your browser. Nothing is uploaded.',
+  sectionAriaLabel: 'Image upload and quality',
   qualityLabel: 'Quality',
   qualityMin: 30,
   qualityMax: 95,
@@ -25,6 +26,7 @@ export const SOUND_COMPRESS_CONFIG = {
   title: 'Compress sound to MP3',
   subtitle:
     'Shrink WAV, MP3, OGG, FLAC, and M4A audio in your browser. Nothing is uploaded.',
+  sectionAriaLabel: 'Sound upload and bitrate',
   bitrateLabel: 'Bitrate',
   bitrateAriaLabel: 'MP3 bitrate',
   bitrateOptions: [64, 96, 128, 192] as const,

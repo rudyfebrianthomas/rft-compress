@@ -63,7 +63,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
             >
               <div>
                 <span className="block font-mono text-[11px] uppercase tracking-wider text-muted">
-                  Input
+                  {ABOUT_TEXT.formatColumns.input}
                 </span>
                 <span className="text-sm font-medium text-ink sm:text-base">
                   {row.input}
@@ -71,7 +71,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               </div>
               <div>
                 <span className="block font-mono text-[11px] uppercase tracking-wider text-muted">
-                  Output
+                  {ABOUT_TEXT.formatColumns.output}
                 </span>
                 <span className="font-mono text-sm font-medium text-ink sm:text-base">
                   {row.output}
@@ -79,7 +79,7 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
               </div>
               <div>
                 <span className="block font-mono text-[11px] uppercase tracking-wider text-muted">
-                  Method
+                  {ABOUT_TEXT.formatColumns.method}
                 </span>
                 <span className="text-sm text-muted">{row.method}</span>
               </div>

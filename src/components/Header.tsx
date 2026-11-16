@@ -60,7 +60,7 @@ export function Header({
         </a>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-          <nav aria-label="Primary" className="flex items-center gap-0.5">
+          <nav aria-label={SITE_TEXT.navAriaLabel} className="flex items-center gap-0.5">
             {NAV_ITEMS.map((item) => {
               const isActive = currentPage === item.id
               return (
@@ -96,8 +96,12 @@ export function Header({
           <button
             type="button"
             onClick={onToggleTheme}
-            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
-            title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            aria-label={
+              isDark ? SITE_TEXT.themeSwitchToLight : SITE_TEXT.themeSwitchToDark
+            }
+            title={
+              isDark ? SITE_TEXT.themeSwitchToLight : SITE_TEXT.themeSwitchToDark
+            }
             className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-surface hover:text-ink active:scale-[0.96]"
           >
             {isDark ? (

@@ -18,7 +18,7 @@ export const HOME_TEXT = {
     {
       id: 'image',
       title: 'Compress Image',
-      formats: 'PNG · JPG · WEBP · BMP · GIF',
+      formats: 'PNG · JPG · WEBP · BMP · AVIF · GIF',
       description: 'Convert photos to WebP and shrink animated GIFs.',
       action: 'Compress images',
     },
@@ -38,6 +38,11 @@ export const ABOUT_TEXT = {
     'RFT Compress is a browser-based media compressor for images and sound. All encoding runs locally in memory on your device, so files never leave your browser.',
   howToUseHeading: 'How to use',
   formatsHeading: 'Supported formats',
+  formatColumns: {
+    input: 'Input',
+    output: 'Output',
+    method: 'Method',
+  },
   steps: [
     {
       step: '01',
