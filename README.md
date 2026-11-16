@@ -34,6 +34,7 @@ RFT Compress is a client-side image and audio compressor built with React, TypeS
 | Image Compression | `@jsquash/webp` & `gifsicle-wasm-browser` | Client-side WASM `libwebp` encoding and GIF optimization |
 | Audio Compression | Web Audio API & `@breezystack/lamejs` | Browser PCM decoding and LAME MP3 encoding |
 | Archive Export | `fflate` | Zero-compression streaming `.zip` bundle creation |
+| Testing | Vitest, Testing Library, `jsdom` | Unit, hook, and UI component tests |
 | Linting | `oxlint` | Fast static lint checks across `src/` |
 
 ## Getting Started
@@ -53,6 +54,8 @@ npm run dev        # Start Vite dev server
 npm run build      # Build production bundle into dist/
 npm run typecheck  # Run TypeScript project checks (tsc -b)
 npm run lint       # Run oxlint across source files
+npm test           # Run Vitest suite once
+npm run test:watch # Run Vitest in watch mode
 npm run preview    # Preview the production build locally
 ```
 
@@ -65,6 +68,7 @@ npm run preview    # Preview the production build locally
 ├── tsconfig.app.json
 ├── tsconfig.node.json
 ├── vite.config.ts
+├── vitest.config.ts
 ├── public/
 │   └── favicon.ico
 └── src/
@@ -73,6 +77,8 @@ npm run preview    # Preview the production build locally
     ├── types.ts
     ├── vite-env.d.ts
     ├── App.tsx
+    ├── test/
+    │   └── setup.ts
     ├── constants/
     │   ├── compression.ts
     │   ├── navigation.ts
@@ -83,6 +89,7 @@ npm run preview    # Preview the production build locally
     │   ├── useFileDrop.ts
     │   ├── useHashRoute.ts
     │   ├── useMediaQueue.ts
+    │   ├── useMediaQueue.test.ts
     │   └── useTheme.ts
     ├── components/
     │   ├── CompressionResultsSection.tsx
@@ -92,6 +99,7 @@ npm run preview    # Preview the production build locally
     │   ├── LoadingOverlay.tsx
     │   ├── MediaCompressPage.tsx
     │   ├── ResultRow.tsx
+    │   ├── ResultRow.test.tsx
     │   └── SoundResultCard.tsx
     ├── pages/
     │   ├── AboutPage.tsx
@@ -103,5 +111,6 @@ npm run preview    # Preview the production build locally
         ├── compressSound.ts
         ├── download.ts
         ├── format.ts
+        ├── format.test.ts
         └── mediaItems.ts
 ```
