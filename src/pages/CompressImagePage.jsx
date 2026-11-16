@@ -8,6 +8,7 @@ import { formatBytes, getCompressionStats } from '../utils/format.js'
 export function CompressImagePage({
   items,
   quality,
+  duplicateNotice = '',
   onQualityChange,
   onFilesSelected,
   onRecompressAll,
@@ -92,6 +93,12 @@ export function CompressImagePage({
         </div>
 
         <DropZone onFilesSelected={onFilesSelected} />
+
+        {duplicateNotice && (
+          <p role="status" className="font-mono text-xs text-muted">
+            {duplicateNotice}
+          </p>
+        )}
       </section>
 
       {items.length > 0 && (

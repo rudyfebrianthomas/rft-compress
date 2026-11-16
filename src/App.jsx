@@ -8,6 +8,7 @@ import { CompressSoundPage } from './pages/CompressSoundPage.jsx'
 import { HomePage } from './pages/HomePage.jsx'
 import { compressImageFile, isGifFile } from './utils/compressImage.js'
 import { compressSoundFile, isAudioFile } from './utils/compressSound.js'
+import { partitionNewFiles } from './utils/format.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -51,9 +52,11 @@ function App() {
 
   const [quality, setQuality] = useState(0.8)
   const [imageItems, setImageItems] = useState([])
+  const [imageDuplicateNote, setImageDuplicateNote] = useState('')
 
   const [bitrate, setBitrate] = useState(128)
   const [soundItems, setSoundItems] = useState([])
+  const [soundDuplicateNote, setSoundDuplicateNote] = useState('')
 
   useEffect(() => {
     imageItemsRef.current = imageItems
@@ -164,16 +167,25 @@ function App() {
     }
   }
 
+  function formatDuplicateNotice(skippedCount) {
+    if (skippedCount <= 0) return ''
+    return `Skipped ${skippedCount} duplicate ${skippedCount === 1 ? 'file' : 'files'} already uploaded.`
+  }
+
   function handleImageFilesSelected(fileList) {
-    const validFiles = fileList.filter(
+    const { accepted, skippedCount } = partitionNewFiles(
+      fileList,
+      imageItems,
       (file) => file.type.startsWith('image/') || isGifFile(file),
     )
-    if (validFiles.length === 0) return
+    setImageDuplicateNote(formatDuplicateNotice(skippedCount))
+    if (accepted.length === 0) return
 
-    const newEntries = validFiles.map((file) => {
+    const newEntries = accepted.map(({ file, key }) => {
       const fallbackPreviewUrl = URL.createObjectURL(file)
       return {
         id: createItemId(),
+        fileKey: key,
         file,
         outputName: file.name,
         format: isGifFile(file) ? 'GIF' : 'WEBP',
@@ -200,6 +212,7 @@ function App() {
 
   function handleRecompressImages() {
     const snapshot = imageItems
+    setImageDuplicateNote('')
     setImageItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
@@ -209,6 +222,7 @@ function App() {
   }
 
   function handleRemoveImage(id) {
+    setImageDuplicateNote('')
     setImageItems((prev) => {
       const target = prev.find((item) => item.id === id)
       if (target) revokeItemUrls(target)
@@ -217,6 +231,7 @@ function App() {
   }
 
   function handleClearImages() {
+    setImageDuplicateNote('')
     setImageItems((prev) => {
       prev.forEach(revokeItemUrls)
       return []
@@ -264,11 +279,17 @@ function App() {
   }
 
   function handleSoundFilesSelected(fileList) {
-    const validFiles = fileList.filter(isAudioFile)
-    if (validFiles.length === 0) return
+    const { accepted, skippedCount } = partitionNewFiles(
+      fileList,
+      soundItems,
+      isAudioFile,
+    )
+    setSoundDuplicateNote(formatDuplicateNotice(skippedCount))
+    if (accepted.length === 0) return
 
-    const newEntries = validFiles.map((file) => ({
+    const newEntries = accepted.map(({ file, key }) => ({
       id: createItemId(),
+      fileKey: key,
       file,
       outputName: file.name,
       format: 'MP3',
@@ -292,6 +313,7 @@ function App() {
 
   function handleRecompressSounds() {
     const snapshot = soundItems
+    setSoundDuplicateNote('')
     setSoundItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
@@ -301,6 +323,7 @@ function App() {
   }
 
   function handleRemoveSound(id) {
+    setSoundDuplicateNote('')
     setSoundItems((prev) => {
       const target = prev.find((item) => item.id === id)
       if (target) revokeItemUrls(target)
@@ -309,6 +332,7 @@ function App() {
   }
 
   function handleClearSounds() {
+    setSoundDuplicateNote('')
     setSoundItems((prev) => {
       prev.forEach(revokeItemUrls)
       return []
@@ -340,6 +364,7 @@ function App() {
             <CompressImagePage
               items={imageItems}
               quality={quality}
+              duplicateNotice={imageDuplicateNote}
               onQualityChange={setQuality}
               onFilesSelected={handleImageFilesSelected}
               onRecompressAll={handleRecompressImages}
@@ -352,6 +377,7 @@ function App() {
             <CompressSoundPage
               items={soundItems}
               bitrate={bitrate}
+              duplicateNotice={soundDuplicateNote}
               onBitrateChange={setBitrate}
               onFilesSelected={handleSoundFilesSelected}
               onRecompressAll={handleRecompressSounds}

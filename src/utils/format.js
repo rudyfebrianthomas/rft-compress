@@ -30,3 +30,28 @@ export function replaceExtension(filename, nextExt) {
   const base = dotIndex > 0 ? filename.slice(0, dotIndex) : filename
   return `${base}.${nextExt}`
 }
+
+export function getFileSignature(file) {
+  return `${file.name}::${file.size}::${file.lastModified ?? 0}::${file.type}`
+}
+
+export function partitionNewFiles(fileList, existingItems, isSupported) {
+  const seen = new Set(
+    existingItems.map((item) => item.fileKey || getFileSignature(item.file)),
+  )
+  const accepted = []
+  let skippedCount = 0
+
+  for (const file of fileList) {
+    if (!isSupported(file)) continue
+    const key = getFileSignature(file)
+    if (seen.has(key)) {
+      skippedCount += 1
+      continue
+    }
+    seen.add(key)
+    accepted.push({ file, key })
+  }
+
+  return { accepted, skippedCount }
+}

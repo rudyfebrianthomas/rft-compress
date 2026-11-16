@@ -10,6 +10,7 @@ const BITRATE_OPTIONS = [64, 96, 128, 192]
 export function CompressSoundPage({
   items,
   bitrate,
+  duplicateNotice = '',
   onBitrateChange,
   onFilesSelected,
   onRecompressAll,
@@ -109,6 +110,12 @@ export function CompressSoundPage({
           formatHint="WAV · MP3 · OGG · FLAC · M4A · AAC → MP3"
           buttonLabel="Select audio"
         />
+
+        {duplicateNotice && (
+          <p role="status" className="font-mono text-xs text-muted">
+            {duplicateNotice}
+          </p>
+        )}
       </section>
 
       {items.length > 0 && (
