@@ -10,7 +10,7 @@ import { compressImageFile, isGifFile } from './utils/compressImage.js'
 import { compressSoundFile, isAudioFile } from './utils/compressSound.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
-const LENIS_OPTIONS = { autoRaf: true, naiveDimensions: true }
+const LENIS_OPTIONS = { autoRaf: true, smoothWheel: false, naiveDimensions: true }
 
 function getPageFromHash() {
   const hash = window.location.hash.toLowerCase()
@@ -46,6 +46,7 @@ function App() {
   const lenisRef = useRef(null)
   const imageItemsRef = useRef([])
   const soundItemsRef = useRef([])
+  const removedIdsRef = useRef(new Set())
 
   const [currentPage, setCurrentPage] = useState(getPageFromHash)
   const [theme, setTheme] = useState(getInitialTheme)
@@ -103,8 +104,10 @@ function App() {
   }
 
   async function processImageEntry(id, file, targetQuality) {
+    if (removedIdsRef.current.has(id)) return
     try {
       const result = await compressImageFile(file, targetQuality)
+      if (removedIdsRef.current.has(id)) return
       const compressedUrl = URL.createObjectURL(result.blob)
 
       setImageItems((prev) =>
@@ -143,6 +146,13 @@ function App() {
     }
   }
 
+  async function processEntriesSequentially(entries, runner) {
+    for (const entry of entries) {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      await runner(entry)
+    }
+  }
+
   function handleImageFilesSelected(fileList) {
     const validFiles = fileList.filter(
       (file) => file.type.startsWith('image/') || isGifFile(file),
@@ -172,9 +182,9 @@ function App() {
     })
 
     setImageItems((prev) => [...newEntries, ...prev])
-    newEntries.forEach((entry) => {
-      processImageEntry(entry.id, entry.file, quality)
-    })
+    processEntriesSequentially(newEntries, (entry) =>
+      processImageEntry(entry.id, entry.file, quality),
+    )
   }
 
   function handleRecompressImages() {
@@ -182,12 +192,13 @@ function App() {
     setImageItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
-    snapshot.forEach((item) => {
-      processImageEntry(item.id, item.file, quality)
-    })
+    processEntriesSequentially(snapshot, (item) =>
+      processImageEntry(item.id, item.file, quality),
+    )
   }
 
   function handleRemoveImage(id) {
+    removedIdsRef.current.add(id)
     setImageItems((prev) => {
       const target = prev.find((item) => item.id === id)
       if (target) revokeItemUrls(target)
@@ -197,14 +208,19 @@ function App() {
 
   function handleClearImages() {
     setImageItems((prev) => {
-      prev.forEach(revokeItemUrls)
+      prev.forEach((item) => {
+        removedIdsRef.current.add(item.id)
+        revokeItemUrls(item)
+      })
       return []
     })
   }
 
   async function processSoundEntry(id, file, targetBitrate) {
+    if (removedIdsRef.current.has(id)) return
     try {
       const result = await compressSoundFile(file, targetBitrate)
+      if (removedIdsRef.current.has(id)) return
       const compressedUrl = URL.createObjectURL(result.blob)
 
       setSoundItems((prev) =>
@@ -264,9 +280,9 @@ function App() {
     }))
 
     setSoundItems((prev) => [...newEntries, ...prev])
-    newEntries.forEach((entry) => {
-      processSoundEntry(entry.id, entry.file, bitrate)
-    })
+    processEntriesSequentially(newEntries, (entry) =>
+      processSoundEntry(entry.id, entry.file, bitrate),
+    )
   }
 
   function handleRecompressSounds() {
@@ -274,12 +290,13 @@ function App() {
     setSoundItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
-    snapshot.forEach((item) => {
-      processSoundEntry(item.id, item.file, bitrate)
-    })
+    processEntriesSequentially(snapshot, (item) =>
+      processSoundEntry(item.id, item.file, bitrate),
+    )
   }
 
   function handleRemoveSound(id) {
+    removedIdsRef.current.add(id)
     setSoundItems((prev) => {
       const target = prev.find((item) => item.id === id)
       if (target) revokeItemUrls(target)
@@ -289,7 +306,10 @@ function App() {
 
   function handleClearSounds() {
     setSoundItems((prev) => {
-      prev.forEach(revokeItemUrls)
+      prev.forEach((item) => {
+        removedIdsRef.current.add(item.id)
+        revokeItemUrls(item)
+      })
       return []
     })
   }

@@ -11,7 +11,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
   const isDark = theme === 'dark'
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-30 border-b border-border bg-bg transition-colors">
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>

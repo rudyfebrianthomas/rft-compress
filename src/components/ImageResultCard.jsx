@@ -28,6 +28,8 @@ export function ImageResultCard({ item, onRemove, disableDownload = false }) {
             <img
               src={item.previewUrl}
               alt={item.outputName}
+              loading="lazy"
+              decoding="async"
               className="size-full object-cover"
             />
           ) : (
