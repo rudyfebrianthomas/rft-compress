@@ -6,6 +6,8 @@ import { AboutPage } from './pages/AboutPage.jsx'
 import { HomePage } from './pages/HomePage.jsx'
 import { compressImageFile, isGifFile } from './utils/compressImage.js'
 
+const CURRENT_YEAR = new Date().getFullYear()
+
 function getPageFromHash() {
   return window.location.hash === '#about' ? 'about' : 'home'
 }
@@ -220,7 +222,7 @@ function App() {
           <footer className="mx-auto w-full max-w-4xl px-6 pb-10 pt-2 text-center sm:px-8">
             <div className="border-t border-border pt-6">
               <p className="font-mono text-xs text-muted">
-                © {new Date().getFullYear()} RFT Compress Images · Local WebP &amp; GIF
+                © {CURRENT_YEAR} RFT Compress Images · Local WebP &amp; GIF
               </p>
             </div>
           </footer>
