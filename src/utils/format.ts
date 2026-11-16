@@ -89,15 +89,23 @@ export function partitionNewFiles<
   fileList: T[],
   existingItems: Array<{ fileKey?: string; file: T }>,
   isSupported: (file: T) => boolean,
-): { accepted: Array<AcceptedFile<T>>; skippedCount: number } {
+): {
+  accepted: Array<AcceptedFile<T>>
+  skippedCount: number
+  invalidNames: string[]
+} {
   const seen = new Set(
     existingItems.map((item) => item.fileKey || getFileSignature(item.file)),
   )
   const accepted: Array<AcceptedFile<T>> = []
+  const invalidNames: string[] = []
   let skippedCount = 0
 
   for (const file of fileList) {
-    if (!isSupported(file)) continue
+    if (!isSupported(file)) {
+      invalidNames.push(file.name)
+      continue
+    }
     const key = getFileSignature(file)
     if (seen.has(key)) {
       skippedCount += 1
@@ -107,5 +115,5 @@ export function partitionNewFiles<
     accepted.push({ file, key })
   }
 
-  return { accepted, skippedCount }
+  return { accepted, skippedCount, invalidNames }
 }

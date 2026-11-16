@@ -17,15 +17,30 @@ interface DecodedDrawable {
   cleanup: () => void
 }
 
+const IMAGE_MIME_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/jpg',
+  'image/webp',
+  'image/bmp',
+  'image/avif',
+  'image/gif',
+])
+
+const IMAGE_EXT_RE = /\.(png|jpe?g|webp|bmp|avif|gif)$/i
+
 export function isGifFile(file: { type: string; name: string }): boolean {
   return (
-    file.type === 'image/gif' ||
+    file.type.toLowerCase() === 'image/gif' ||
     file.name.toLowerCase().endsWith('.gif')
   )
 }
 
 export function isImageFile(file: { type: string; name: string }): boolean {
-  return file.type.startsWith('image/') || isGifFile(file)
+  return (
+    IMAGE_MIME_TYPES.has(file.type.toLowerCase()) ||
+    IMAGE_EXT_RE.test(file.name)
+  )
 }
 
 async function decodeDrawable(

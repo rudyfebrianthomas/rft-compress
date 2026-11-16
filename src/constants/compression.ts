@@ -9,8 +9,10 @@ export const IMAGE_COMPRESS_CONFIG = {
   zipFilename: 'compressed-images.zip',
   resultsAriaLabel: 'Compressed images',
   loadingLabel: 'Compressing images',
+  allowedFormatsLabel: 'PNG, JPG, WEBP, BMP, AVIF, GIF',
   dropZone: {
-    accept: 'image/*,.gif,.png,.jpg,.jpeg,.webp,.avif,.bmp',
+    accept:
+      '.png,.jpg,.jpeg,.webp,.avif,.bmp,.gif,image/png,image/jpeg,image/webp,image/avif,image/bmp,image/gif',
     ariaLabel: 'Upload images by dragging and dropping or clicking to browse',
     idleTitle: 'Drop images here or browse',
     dragTitle: 'Drop images to compress',
@@ -30,8 +32,9 @@ export const SOUND_COMPRESS_CONFIG = {
   zipFilename: 'compressed-sound.zip',
   resultsAriaLabel: 'Compressed audio files',
   loadingLabel: 'Compressing sound',
+  allowedFormatsLabel: 'WAV, MP3, OGG, FLAC, M4A, AAC, WebM',
   dropZone: {
-    accept: 'audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac,.webm',
+    accept: 'audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac,.webm,.opus,.aiff,.wma',
     ariaLabel:
       'Upload audio files by dragging and dropping or clicking to browse',
     idleTitle: 'Drop audio files here or browse',

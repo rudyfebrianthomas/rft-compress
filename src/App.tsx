@@ -37,6 +37,7 @@ function App() {
   const imageQueue = useMediaQueue({
     setting: quality,
     loadingLabel: IMAGE_COMPRESS_CONFIG.loadingLabel,
+    allowedFormats: IMAGE_COMPRESS_CONFIG.allowedFormatsLabel,
     isSupported: isImageFile,
     createPending: createPendingImageItem,
     compress: compressImageFile,
@@ -47,6 +48,7 @@ function App() {
   const soundQueue = useMediaQueue({
     setting: bitrate,
     loadingLabel: SOUND_COMPRESS_CONFIG.loadingLabel,
+    allowedFormats: SOUND_COMPRESS_CONFIG.allowedFormatsLabel,
     isSupported: isAudioFile,
     createPending: createPendingSoundItem,
     compress: compressSoundFile,
@@ -78,6 +80,7 @@ function App() {
               items={imageQueue.items}
               quality={quality}
               duplicateNotice={imageQueue.duplicateNotice}
+              uploadError={imageQueue.uploadError}
               onQualityChange={setQuality}
               onFilesSelected={imageQueue.handleFilesSelected}
               onRecompressAll={imageQueue.handleRecompressAll}
@@ -91,6 +94,7 @@ function App() {
               items={soundQueue.items}
               bitrate={bitrate}
               duplicateNotice={soundQueue.duplicateNotice}
+              uploadError={soundQueue.uploadError}
               onBitrateChange={setBitrate}
               onFilesSelected={soundQueue.handleFilesSelected}
               onRecompressAll={soundQueue.handleRecompressAll}

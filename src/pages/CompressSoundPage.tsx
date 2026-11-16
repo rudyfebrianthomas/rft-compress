@@ -9,6 +9,7 @@ interface CompressSoundPageProps {
   items: SoundItem[]
   bitrate: number
   duplicateNotice?: string
+  uploadError?: string
   onBitrateChange: (bitrate: number) => void
   onFilesSelected: (files: File[]) => void
   onRecompressAll: () => void
@@ -20,6 +21,7 @@ export function CompressSoundPage({
   items,
   bitrate,
   duplicateNotice = '',
+  uploadError = '',
   onBitrateChange,
   onFilesSelected,
   onRecompressAll,
@@ -93,6 +95,12 @@ export function CompressSoundPage({
           onFilesSelected={onFilesSelected}
           {...SOUND_COMPRESS_CONFIG.dropZone}
         />
+
+        {uploadError && (
+          <p role="alert" className="font-mono text-xs text-error">
+            {uploadError}
+          </p>
+        )}
 
         {duplicateNotice && (
           <p role="status" className="font-mono text-xs text-muted">

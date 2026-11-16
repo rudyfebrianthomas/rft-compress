@@ -19,6 +19,20 @@ export function formatDuplicateNotice(skippedCount: number): string {
   return `Skipped ${skippedCount} duplicate ${skippedCount === 1 ? 'file' : 'files'} already uploaded.`
 }
 
+export function formatInvalidFormatError(
+  invalidNames: string[],
+  allowedFormats: string,
+): string {
+  if (invalidNames.length === 0) return ''
+  const preview = invalidNames
+    .slice(0, 3)
+    .map((name) => `"${name}"`)
+    .join(', ')
+  const extra =
+    invalidNames.length > 3 ? ` (+${invalidNames.length - 3} more)` : ''
+  return `Unsupported file format: ${preview}${extra}. Allowed: ${allowedFormats}.`
+}
+
 export function createPendingImageItem(
   file: File,
   fileKey: string,

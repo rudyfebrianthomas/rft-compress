@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import type { BaseMediaItem } from '../types.ts'
 import { partitionNewFiles } from '../utils/format.ts'
-import { formatDuplicateNotice, revokeItemUrls } from '../utils/mediaItems.ts'
+import {
+  formatDuplicateNotice,
+  formatInvalidFormatError,
+  revokeItemUrls,
+} from '../utils/mediaItems.ts'
 
 export type RunBatchFn = <T extends BaseMediaItem>(
   entries: T[],
@@ -16,6 +20,7 @@ interface UseMediaQueueOptions<
 > {
   setting: TSetting
   loadingLabel: string
+  allowedFormats: string
   isSupported: (file: File) => boolean
   createPending: (file: File, fileKey: string, setting: TSetting) => TItem
   compress: (file: File, setting: TSetting) => Promise<TResult>
@@ -35,6 +40,7 @@ export function useMediaQueue<
 >({
   setting,
   loadingLabel,
+  allowedFormats,
   isSupported,
   createPending,
   compress,
@@ -44,6 +50,7 @@ export function useMediaQueue<
   const itemsRef = useRef<TItem[]>([])
   const [items, setItems] = useState<TItem[]>([])
   const [duplicateNotice, setDuplicateNotice] = useState('')
+  const [uploadError, setUploadError] = useState('')
 
   useEffect(() => {
     itemsRef.current = items
@@ -88,12 +95,13 @@ export function useMediaQueue<
   }
 
   function handleFilesSelected(fileList: File[]): void {
-    const { accepted, skippedCount } = partitionNewFiles(
+    const { accepted, skippedCount, invalidNames } = partitionNewFiles(
       fileList,
       items,
       isSupported,
     )
     setDuplicateNotice(formatDuplicateNotice(skippedCount))
+    setUploadError(formatInvalidFormatError(invalidNames, allowedFormats))
     if (accepted.length === 0) return
 
     const newEntries = accepted.map(({ file, key }) =>
@@ -108,6 +116,7 @@ export function useMediaQueue<
   function handleRecompressAll(): void {
     const snapshot = items
     setDuplicateNotice('')
+    setUploadError('')
     setItems((prev) =>
       prev.map((item) => ({ ...item, status: 'processing', error: null })),
     )
@@ -118,6 +127,7 @@ export function useMediaQueue<
 
   function handleRemoveItem(id: string): void {
     setDuplicateNotice('')
+    setUploadError('')
     setItems((prev) => {
       const target = prev.find((item) => item.id === id)
       if (target) revokeItemUrls(target)
@@ -127,6 +137,7 @@ export function useMediaQueue<
 
   function handleClearAll(): void {
     setDuplicateNotice('')
+    setUploadError('')
     setItems((prev) => {
       prev.forEach(revokeItemUrls)
       return []
@@ -136,6 +147,7 @@ export function useMediaQueue<
   return {
     items,
     duplicateNotice,
+    uploadError,
     handleFilesSelected,
     handleRecompressAll,
     handleRemoveItem,

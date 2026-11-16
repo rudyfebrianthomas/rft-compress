@@ -9,6 +9,7 @@ interface CompressImagePageProps {
   items: ImageItem[]
   quality: number
   duplicateNotice?: string
+  uploadError?: string
   onQualityChange: (quality: number) => void
   onFilesSelected: (files: File[]) => void
   onRecompressAll: () => void
@@ -20,6 +21,7 @@ export function CompressImagePage({
   items,
   quality,
   duplicateNotice = '',
+  uploadError = '',
   onQualityChange,
   onFilesSelected,
   onRecompressAll,
@@ -85,6 +87,12 @@ export function CompressImagePage({
           onFilesSelected={onFilesSelected}
           {...IMAGE_COMPRESS_CONFIG.dropZone}
         />
+
+        {uploadError && (
+          <p role="alert" className="font-mono text-xs text-error">
+            {uploadError}
+          </p>
+        )}
 
         {duplicateNotice && (
           <p role="status" className="font-mono text-xs text-muted">
