@@ -2,7 +2,7 @@ import { motion } from 'motion/react'
 import { triggerUrlDownload } from '../utils/download.js'
 import { formatBytes, getCompressionStats } from '../utils/format.js'
 
-export function ImageResultCard({ item, onRemove, disableDownload = false }) {
+export function ImageResultCard({ item, onRemove }) {
   const isReady = item.status === 'done'
   const isError = item.status === 'error'
   const stats = isReady
@@ -10,7 +10,7 @@ export function ImageResultCard({ item, onRemove, disableDownload = false }) {
     : null
 
   function handleDownload() {
-    if (!item.compressedUrl || disableDownload) return
+    if (!item.compressedUrl) return
     triggerUrlDownload(item.compressedUrl, item.outputName)
   }
 
@@ -93,7 +93,7 @@ export function ImageResultCard({ item, onRemove, disableDownload = false }) {
         <button
           type="button"
           onClick={handleDownload}
-          disabled={!isReady || disableDownload}
+          disabled={!isReady}
           className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-4 text-xs font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm"
         >
           Download
