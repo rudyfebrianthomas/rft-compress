@@ -43,7 +43,7 @@ export function AboutPage({ onGoHome }) {
       className="space-y-14"
     >
       <section className="space-y-4">
-        <h1 className="max-w-2xl font-display text-3xl font-normal tracking-normal text-ink sm:text-5xl">
+        <h1 className="max-w-2xl font-display text-3xl font-medium tracking-[-0.03em] text-ink sm:text-5xl">
           About Rudy Febrianthomas Compress Images
         </h1>
         <p className="max-w-2xl text-base leading-relaxed text-muted sm:text-lg">

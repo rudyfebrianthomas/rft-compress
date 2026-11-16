@@ -32,8 +32,8 @@
 }
 
 @theme inline {
-  --font-display: "Limelight", "Urbanist", system-ui, sans-serif;
-  --font-sans: "Urbanist", system-ui, -apple-system, sans-serif;
+  --font-display: "Commissioner Variable", system-ui, -apple-system, sans-serif;
+  --font-sans: "Commissioner Variable", system-ui, -apple-system, sans-serif;
   --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --color-bg: var(--theme-bg);

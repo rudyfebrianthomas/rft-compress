@@ -20,7 +20,7 @@ export function Header({ currentPage, onNavigate, theme, onToggleTheme }) {
             e.preventDefault()
             onNavigate('home')
           }}
-          className="inline-flex min-h-[44px] min-w-0 items-center gap-2.5 font-display text-base font-normal tracking-normal text-ink transition-opacity hover:opacity-75 sm:text-lg"
+          className="inline-flex min-h-[44px] min-w-0 items-center gap-2.5 font-display text-[15px] font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:text-base"
         >
           <svg
             width="18"
