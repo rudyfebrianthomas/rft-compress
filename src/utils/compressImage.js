@@ -1,7 +1,5 @@
-import { GIFEncoder, applyPalette, quantize } from 'gifenc/dist/gifenc.esm.js'
-import omggif from 'omggif'
-
-const { GifReader } = omggif
+import encodeWebp from '@jsquash/webp/encode.js'
+import gifsicle from 'gifsicle-wasm-browser'
 
 export function formatBytes(bytes) {
   if (!Number.isFinite(bytes) || bytes < 0) return '0 B'
@@ -43,35 +41,39 @@ function replaceExtension(filename, nextExt) {
   return `${base}.${nextExt}`
 }
 
-async function decodeImageToCanvas(file) {
-  let width = 0
-  let height = 0
-  let drawable = null
-  let objectUrl = null
-
+async function decodeDrawable(blob, name = 'image') {
   try {
     if (typeof createImageBitmap === 'function') {
-      const bitmap = await createImageBitmap(file)
-      width = bitmap.width
-      height = bitmap.height
-      drawable = bitmap
+      const bitmap = await createImageBitmap(blob)
+      return {
+        drawable: bitmap,
+        width: bitmap.width,
+        height: bitmap.height,
+        cleanup: () => bitmap.close(),
+      }
     }
   } catch {
-    drawable = null
+    // Fall through to HTMLImageElement decoding.
   }
 
-  if (!drawable) {
-    objectUrl = URL.createObjectURL(file)
-    drawable = await new Promise((resolve, reject) => {
-      const img = new Image()
-      img.onload = () => resolve(img)
-      img.onerror = () => reject(new Error(`Unable to decode "${file.name}".`))
-      img.src = objectUrl
-    })
-    width = drawable.naturalWidth || drawable.width
-    height = drawable.naturalHeight || drawable.height
-  }
+  const objectUrl = URL.createObjectURL(blob)
+  const img = await new Promise((resolve, reject) => {
+    const el = new Image()
+    el.onload = () => resolve(el)
+    el.onerror = () => reject(new Error(`Unable to decode "${name}".`))
+    el.src = objectUrl
+  })
 
+  return {
+    drawable: img,
+    width: img.naturalWidth || img.width,
+    height: img.naturalHeight || img.height,
+    cleanup: () => URL.revokeObjectURL(objectUrl),
+  }
+}
+
+async function decodeToImageData(file) {
+  const { drawable, width, height, cleanup } = await decodeDrawable(file, file.name)
   try {
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -79,33 +81,33 @@ async function decodeImageToCanvas(file) {
     const ctx = canvas.getContext('2d')
     if (!ctx) throw new Error('Canvas 2D context is unavailable.')
     ctx.drawImage(drawable, 0, 0, width, height)
-    return { canvas, width, height }
+    return {
+      imageData: ctx.getImageData(0, 0, width, height),
+      width,
+      height,
+    }
   } finally {
-    if (drawable && typeof drawable.close === 'function') {
-      drawable.close()
-    }
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl)
-    }
+    cleanup()
+  }
+}
+
+async function getImageDimensions(blob, name) {
+  try {
+    const { width, height, cleanup } = await decodeDrawable(blob, name)
+    cleanup()
+    return { width, height }
+  } catch {
+    return { width: 0, height: 0 }
   }
 }
 
 export async function compressToWebp(file, quality = 0.8) {
-  const { canvas, width, height } = await decodeImageToCanvas(file)
-
-  const blob = await new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (result) => {
-        if (result) resolve(result)
-        else reject(new Error(`Failed to encode "${file.name}" as WebP.`))
-      },
-      'image/webp',
-      quality,
-    )
-  })
+  const { imageData, width, height } = await decodeToImageData(file)
+  const webpQuality = Math.max(1, Math.min(100, Math.round(quality * 100)))
+  const buffer = await encodeWebp(imageData, { quality: webpQuality })
 
   return {
-    blob,
+    blob: new Blob([buffer], { type: 'image/webp' }),
     width,
     height,
     frameCount: 1,
@@ -114,163 +116,27 @@ export async function compressToWebp(file, quality = 0.8) {
   }
 }
 
-function clearRectRgba(rgba, canvasWidth, x, y, w, h) {
-  const xEnd = Math.min(canvasWidth, x + w)
-  const yEnd = y + h
-  for (let row = Math.max(0, y); row < yEnd; row++) {
-    const rowStart = (row * canvasWidth + Math.max(0, x)) * 4
-    const rowEnd = (row * canvasWidth + xEnd) * 4
-    if (rowEnd > rowStart) {
-      rgba.fill(0, rowStart, rowEnd)
-    }
-  }
-}
-
-export async function compressGifBuffer(bytes, quality = 0.8) {
-  const reader = new GifReader(bytes)
-  const width = reader.width
-  const height = reader.height
-  const frameCount = reader.numFrames()
-
-  if (frameCount === 0) {
-    throw new Error('GIF contains no frames.')
-  }
-
-  // Map 0.3..0.95 quality into 24..160 palette colors for reliable GIF size reduction.
-  const maxColors = Math.max(16, Math.min(256, Math.round(12 + quality * 148)))
-  const rawLoop = reader.loopCount()
-  const repeat = rawLoop === null ? -1 : rawLoop
-
-  const canvasRgba = new Uint8ClampedArray(width * height * 4)
-  const prevCanvasRgba = new Uint8ClampedArray(width * height * 4)
-  const frames = []
-  let anyAlpha = false
-
-  for (let i = 0; i < frameCount; i++) {
-    const info = reader.frameInfo(i)
-    if (info.disposal === 3) {
-      prevCanvasRgba.set(canvasRgba)
-    }
-
-    reader.decodeAndBlitFrameRGBA(i, canvasRgba)
-    const pixels = new Uint8ClampedArray(canvasRgba)
-
-    let frameHasAlpha = false
-    for (let p = 3; p < pixels.length; p += 4) {
-      if (pixels[p] < 128) {
-        frameHasAlpha = true
-        anyAlpha = true
-        break
-      }
-    }
-
-    frames.push({
-      pixels,
-      delay: (info.delay || 10) * 10,
-      hasAlpha: frameHasAlpha,
-    })
-
-    if (info.disposal === 2) {
-      clearRectRgba(canvasRgba, width, info.x, info.y, info.width, info.height)
-    } else if (info.disposal === 3) {
-      canvasRgba.set(prevCanvasRgba)
-    }
-
-    if (i % 8 === 7) {
-      await new Promise((resolve) => setTimeout(resolve, 0))
-    }
-  }
-
-  // Build one shared Global Color Table so frames don't repeat 768-byte local palettes.
-  const totalPixelsPerFrame = width * height
-  const targetSamplePixels = 65536
-  const sampleStep = Math.max(
-    1,
-    Math.floor((totalPixelsPerFrame * frameCount) / targetSamplePixels),
-  )
-  const sampleList = []
-  for (let f = 0; f < frameCount; f++) {
-    const px = frames[f].pixels
-    for (let p = 0; p < totalPixelsPerFrame; p += sampleStep) {
-      const idx = p * 4
-      sampleList.push(px[idx], px[idx + 1], px[idx + 2], px[idx + 3])
-    }
-  }
-  const canDeltaEncode = !anyAlpha && frameCount > 1
-  if (canDeltaEncode) {
-    // Include one transparent sentinel sample so the global palette reserves an alpha slot.
-    sampleList.push(0, 0, 0, 0)
-  }
-
-  const useAlphaFormat = anyAlpha || canDeltaEncode
-  const format = useAlphaFormat ? 'rgba4444' : 'rgb444'
-  const globalPalette = quantize(new Uint8Array(sampleList), maxColors, {
-    format,
-    oneBitAlpha: useAlphaFormat,
-  })
-  const transparentIndex = useAlphaFormat
-    ? globalPalette.findIndex((color) => color[3] === 0)
-    : -1
-
-  const gif = GIFEncoder()
-  let prevIndexed = null
-
-  for (let i = 0; i < frameCount; i++) {
-    const { pixels, delay, hasAlpha } = frames[i]
-    const indexed = applyPalette(pixels, globalPalette, format)
-
-    let frameOutput = indexed
-    let frameTransparent = transparentIndex >= 0 && hasAlpha
-    let dispose = frameTransparent ? 2 : 1
-
-    if (canDeltaEncode && transparentIndex >= 0 && i > 0 && prevIndexed) {
-      // Mark unchanged pixels transparent so LZW encodes long identical runs.
-      const delta = new Uint8Array(indexed.length)
-      for (let k = 0; k < indexed.length; k++) {
-        delta[k] = indexed[k] === prevIndexed[k] ? transparentIndex : indexed[k]
-      }
-      frameOutput = delta
-      frameTransparent = true
-      dispose = 1
-    }
-
-    gif.writeFrame(frameOutput, width, height, {
-      palette: i === 0 ? globalPalette : undefined,
-      delay,
-      repeat: i === 0 ? repeat : undefined,
-      transparent: frameTransparent,
-      transparentIndex: transparentIndex >= 0 ? transparentIndex : 0,
-      dispose,
-    })
-
-    prevIndexed = indexed
-
-    if (i % 8 === 7) {
-      await new Promise((resolve) => setTimeout(resolve, 0))
-    }
-  }
-
-  gif.finish()
-  return {
-    bytes: gif.bytesView(),
-    width,
-    height,
-    frameCount,
-  }
-}
-
 export async function compressGif(file, quality = 0.8) {
-  const inputBytes = new Uint8Array(await file.arrayBuffer())
-  const { bytes, width, height, frameCount } = await compressGifBuffer(
-    inputBytes,
-    quality,
-  )
+  const lossy = Math.max(10, Math.min(180, Math.round((1 - quality) * 200)))
+  const optLevel = file.size > 5 * 1024 * 1024 ? '-O1' : '-O2'
+
+  const outFiles = await gifsicle.run({
+    input: [{ file, name: 'input.gif' }],
+    command: [`${optLevel} --lossy=${lossy} input.gif -o /out/out.gif`],
+  })
+
+  if (!Array.isArray(outFiles) || outFiles.length === 0) {
+    throw new Error(`Failed to compress "${file.name}".`)
+  }
+
+  const outputBlob = outFiles[0]
+  const { width, height } = await getImageDimensions(outputBlob, file.name)
 
   return {
-    blob: new Blob([bytes], { type: 'image/gif' }),
+    blob: outputBlob,
     width,
     height,
-    frameCount,
+    frameCount: 1,
     outputName: replaceExtension(file.name, 'gif'),
     format: 'GIF',
   }

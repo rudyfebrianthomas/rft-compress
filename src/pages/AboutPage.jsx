@@ -11,7 +11,7 @@ const STEPS = [
     step: '02',
     title: 'Compress locally',
     detail:
-      'Raster images convert to WebP at your chosen quality. GIFs decode frame by frame and re-encode with a shared palette while preserving animation.',
+      'Raster images encode to WebP via WebAssembly libwebp at your chosen quality. GIFs run through Gifsicle lossy LZW optimization while preserving animation.',
   },
   {
     step: '03',
@@ -25,12 +25,12 @@ const FORMAT_ROWS = [
   {
     input: 'PNG, JPG, JPEG, WebP, BMP, AVIF',
     output: 'WebP (.webp)',
-    method: 'Canvas WebP encoding with transparency',
+    method: 'WebAssembly libwebp encoding with transparency',
   },
   {
     input: 'GIF (.gif)',
     output: 'GIF (.gif)',
-    method: 'Shared palette quantization and frame delta encoding',
+    method: 'WebAssembly Gifsicle lossy LZW optimization',
   },
 ]
 
