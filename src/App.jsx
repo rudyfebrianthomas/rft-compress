@@ -1,5 +1,5 @@
 import { ReactLenis } from 'lenis/react'
-import { MotionConfig, cancelFrame, frame } from 'motion/react'
+import { MotionConfig } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Header } from './components/Header.jsx'
 import { AboutPage } from './pages/AboutPage.jsx'
@@ -10,6 +10,7 @@ import { compressImageFile, isGifFile } from './utils/compressImage.js'
 import { compressSoundFile, isAudioFile } from './utils/compressSound.js'
 
 const CURRENT_YEAR = new Date().getFullYear()
+const LENIS_OPTIONS = { autoRaf: true, naiveDimensions: true }
 
 function getPageFromHash() {
   const hash = window.location.hash.toLowerCase()
@@ -74,13 +75,8 @@ function App() {
   }, [theme])
 
   useEffect(() => {
-    function update(data) {
-      lenisRef.current?.lenis?.raf(data.timestamp)
-    }
-
-    frame.update(update, true)
-    return () => cancelFrame(update)
-  }, [])
+    lenisRef.current?.lenis?.resize()
+  }, [currentPage, imageItems.length, soundItems.length])
 
   useEffect(() => {
     function handleHashChange() {
@@ -300,7 +296,7 @@ function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <ReactLenis root options={{ autoRaf: false }} ref={lenisRef}>
+      <ReactLenis root options={LENIS_OPTIONS} ref={lenisRef}>
         <div className="flex min-h-screen flex-col bg-bg text-ink">
           <Header
             currentPage={currentPage}
