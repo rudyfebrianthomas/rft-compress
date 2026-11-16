@@ -1,12 +1,9 @@
 import { motion } from 'motion/react'
+import { Link } from 'wouter'
+import { PAGE_ROUTES } from '../constants/navigation.ts'
 import { ABOUT_TEXT } from '../constants/pages.ts'
-import type { PageId } from '../types.ts'
 
-interface AboutPageProps {
-  onNavigate: (page: PageId) => void
-}
-
-export function AboutPage({ onNavigate }: AboutPageProps) {
+export function AboutPage() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -89,20 +86,18 @@ export function AboutPage({ onNavigate }: AboutPageProps) {
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => onNavigate('image')}
-          className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
+        <Link
+          href={PAGE_ROUTES.image}
+          className="inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-6 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
         >
           {ABOUT_TEXT.actions.image}
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate('sound')}
-          className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-border-strong px-6 text-sm font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
+        </Link>
+        <Link
+          href={PAGE_ROUTES.sound}
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-border-strong px-6 text-sm font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
         >
           {ABOUT_TEXT.actions.sound}
-        </button>
+        </Link>
       </div>
     </motion.div>
   )

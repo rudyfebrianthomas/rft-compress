@@ -1,20 +1,15 @@
 import { motion } from 'motion/react'
-import { NAV_ITEMS, SITE_TEXT } from '../constants/navigation.ts'
-import type { PageId, ThemeMode } from '../types.ts'
+import { Link, useLocation } from 'wouter'
+import { NAV_ITEMS, PAGE_ROUTES, SITE_TEXT } from '../constants/navigation.ts'
+import type { ThemeMode } from '../types.ts'
 
 interface HeaderProps {
-  currentPage: PageId
-  onNavigate: (page: PageId) => void
   theme: ThemeMode
   onToggleTheme: () => void
 }
 
-export function Header({
-  currentPage,
-  onNavigate,
-  theme,
-  onToggleTheme,
-}: HeaderProps) {
+export function Header({ theme, onToggleTheme }: HeaderProps) {
+  const [location] = useLocation()
   const isDark = theme === 'dark'
 
   return (
@@ -23,12 +18,8 @@ export function Header({
         {SITE_TEXT.skipToContent}
       </a>
       <div className="mx-auto flex h-16 max-w-4xl items-center justify-between gap-2 px-6 sm:gap-3 sm:px-8">
-        <a
-          href="#home"
-          onClick={(e) => {
-            e.preventDefault()
-            onNavigate('home')
-          }}
+        <Link
+          href={PAGE_ROUTES.home}
           className="inline-flex min-h-11 min-w-0 items-center gap-2 font-display text-sm font-semibold tracking-tight text-ink transition-opacity hover:opacity-75 sm:gap-2.5 sm:text-base"
         >
           <svg
@@ -57,21 +48,17 @@ export function Header({
             />
           </svg>
           <span className="truncate">{SITE_TEXT.brand}</span>
-        </a>
+        </Link>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <nav aria-label={SITE_TEXT.navAriaLabel} className="flex items-center gap-0.5">
             {NAV_ITEMS.map((item) => {
-              const isActive = currentPage === item.id
+              const isActive = location === item.path
               return (
-                <a
+                <Link
                   key={item.id}
-                  href={`#${item.id}`}
+                  href={item.path}
                   aria-current={isActive ? 'page' : undefined}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    onNavigate(item.id)
-                  }}
                   className={`relative inline-flex min-h-11 items-center rounded-full px-2.5 text-xs font-medium transition-colors sm:px-3.5 sm:text-sm ${
                     isActive
                       ? 'text-accent-ink'
@@ -86,7 +73,7 @@ export function Header({
                     />
                   )}
                   <span className="relative z-10">{item.label}</span>
-                </a>
+                </Link>
               )
             })}
           </nav>

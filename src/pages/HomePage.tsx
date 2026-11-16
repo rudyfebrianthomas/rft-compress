@@ -1,12 +1,9 @@
 import { motion } from 'motion/react'
+import { Link } from 'wouter'
+import { PAGE_ROUTES } from '../constants/navigation.ts'
 import { HOME_TEXT } from '../constants/pages.ts'
-import type { PageId } from '../types.ts'
 
-interface HomePageProps {
-  onNavigate: (page: PageId) => void
-}
-
-export function HomePage({ onNavigate }: HomePageProps) {
+export function HomePage() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -43,26 +40,24 @@ export function HomePage({ onNavigate }: HomePageProps) {
             </div>
 
             <div>
-              <button
-                type="button"
-                onClick={() => onNavigate(tool.id)}
-                className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
+              <Link
+                href={PAGE_ROUTES[tool.id]}
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98]"
               >
                 {tool.action}
-              </button>
+              </Link>
             </div>
           </article>
         ))}
       </section>
 
       <div>
-        <button
-          type="button"
-          onClick={() => onNavigate('about')}
-          className="inline-flex min-h-11 cursor-pointer items-center text-sm font-medium text-muted transition-colors hover:text-ink"
+        <Link
+          href={PAGE_ROUTES.about}
+          className="inline-flex min-h-11 items-center text-sm font-medium text-muted transition-colors hover:text-ink"
         >
           {HOME_TEXT.aboutLinkLabel}
-        </button>
+        </Link>
       </div>
     </motion.div>
   )
