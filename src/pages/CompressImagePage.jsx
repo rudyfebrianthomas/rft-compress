@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { DropZone } from '../components/DropZone.jsx'
 import { ImageResultCard } from '../components/ImageResultCard.jsx'
+import { downloadItemsAsZip } from '../utils/download.js'
 import { formatBytes, getCompressionStats } from '../utils/format.js'
 
 export function CompressImagePage({
@@ -12,6 +14,8 @@ export function CompressImagePage({
   onRemoveItem,
   onClearAll,
 }) {
+  const [isZipping, setIsZipping] = useState(false)
+  const isCompressing = items.some((item) => item.status === 'processing')
   const readyItems = items.filter((item) => item.status === 'done')
   const totalOriginal = readyItems.reduce((sum, item) => sum + item.originalSize, 0)
   const totalCompressed = readyItems.reduce(
@@ -27,17 +31,14 @@ export function CompressImagePage({
     (item) => item.status === 'done' && item.qualityUsed !== quality,
   )
 
-  function handleDownloadAll() {
-    readyItems.forEach((item, idx) => {
-      setTimeout(() => {
-        const link = document.createElement('a')
-        link.href = item.compressedUrl
-        link.download = item.outputName
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      }, idx * 140)
-    })
+  async function handleDownloadAll() {
+    if (isCompressing || isZipping || readyItems.length === 0) return
+    setIsZipping(true)
+    try {
+      await downloadItemsAsZip(readyItems, 'compressed-images.zip')
+    } finally {
+      setIsZipping(false)
+    }
   }
 
   return (
@@ -80,8 +81,9 @@ export function CompressImagePage({
           {hasStaleQuality && (
             <button
               type="button"
+              disabled={isCompressing}
               onClick={onRecompressAll}
-              className="inline-flex min-h-[36px] cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98]"
+              className="inline-flex min-h-[36px] cursor-pointer items-center rounded-full border border-border-strong px-3.5 text-xs font-medium text-ink transition-colors hover:bg-surface active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               Re-apply
             </button>
@@ -100,7 +102,11 @@ export function CompressImagePage({
               <h2 className="text-lg font-medium tracking-tight text-ink">
                 Results ({items.length})
               </h2>
-              {overallStats ? (
+              {isCompressing ? (
+                <p className="text-xs text-muted sm:text-sm">
+                  Compressing images… downloads unlock once finished.
+                </p>
+              ) : overallStats ? (
                 <p className="font-mono text-xs text-muted tabular-nums sm:text-sm">
                   {formatBytes(totalOriginal)} →{' '}
                   <strong className="font-medium text-ink">
@@ -117,7 +123,7 @@ export function CompressImagePage({
                 </p>
               ) : (
                 <p className="text-xs text-muted sm:text-sm">
-                  Processing uploaded files…
+                  No compressed files available.
                 </p>
               )}
             </div>
@@ -126,10 +132,12 @@ export function CompressImagePage({
               <button
                 type="button"
                 onClick={handleDownloadAll}
-                disabled={readyItems.length === 0}
+                disabled={isCompressing || isZipping || readyItems.length === 0}
                 className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35"
               >
-                Download all ({readyItems.length})
+                {isZipping
+                  ? 'Zipping…'
+                  : `Download all (${readyItems.length}) · .zip`}
               </button>
               <button
                 type="button"
@@ -148,6 +156,7 @@ export function CompressImagePage({
                   key={item.id}
                   item={item}
                   onRemove={onRemoveItem}
+                  disableDownload={isCompressing || isZipping}
                 />
               ))}
             </AnimatePresence>

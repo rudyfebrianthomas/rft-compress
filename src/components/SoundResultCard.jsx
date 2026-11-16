@@ -1,9 +1,10 @@
 import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { formatDuration } from '../utils/compressSound.js'
+import { triggerUrlDownload } from '../utils/download.js'
 import { formatBytes, getCompressionStats } from '../utils/format.js'
 
-export function SoundResultCard({ item, onRemove }) {
+export function SoundResultCard({ item, onRemove, disableDownload = false }) {
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const isReady = item.status === 'done'
@@ -31,13 +32,8 @@ export function SoundResultCard({ item, onRemove }) {
   }
 
   function handleDownload() {
-    if (!item.compressedUrl) return
-    const link = document.createElement('a')
-    link.href = item.compressedUrl
-    link.download = item.outputName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    if (!item.compressedUrl || disableDownload) return
+    triggerUrlDownload(item.compressedUrl, item.outputName)
   }
 
   return (
@@ -140,7 +136,7 @@ export function SoundResultCard({ item, onRemove }) {
         <button
           type="button"
           onClick={handleDownload}
-          disabled={!isReady}
+          disabled={!isReady || disableDownload}
           className="inline-flex min-h-[44px] cursor-pointer items-center justify-center rounded-full bg-accent px-4 text-xs font-medium text-accent-ink transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-35 sm:text-sm"
         >
           Download
